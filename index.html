@@ -1,0 +1,1104 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Công cụ Đánh giá Sức khỏe Tinh thần</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        :root {
+            --primary-color: #4a90e2;
+            --background-color: #f0f4f8;
+            --text-color: #333;
+            --tab-inactive-color: #ccc;
+            --success-color: #28a745; /* Green for positive results or low negative */
+            --warning-color: #ffc107;  /* Yellow for moderate results */
+            --danger-color: #dc3545;   /* Red for low positive or high negative results */
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            color: var(--text-color);
+            background-color: var(--background-color);
+            max-width: 900px; /* Increased max-width for tabs */
+            margin: 0 auto;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        h1, h2, h3 {
+            color: var(--primary-color);
+        }
+        h1 {
+            margin-bottom: 5px;
+        }
+        h1 + p {
+            font-style: italic;
+            color: #555;
+            margin-top: 0;
+        }
+
+        /* Tab Styles */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            border-bottom: 2px solid var(--tab-inactive-color);
+        }
+        .tab-button {
+            padding: 10px 20px;
+            cursor: pointer;
+            border: none;
+            background-color: transparent;
+            color: var(--text-color);
+            font-size: 1em;
+            transition: color 0.3s, border-bottom-color 0.3s;
+            border-bottom: 2px solid transparent;
+            margin-bottom: -2px; /* Overlap border */
+        }
+        .tab-button.active {
+            color: var(--primary-color);
+            border-bottom-color: var(--primary-color);
+            font-weight: bold;
+        }
+        .tab-content {
+            display: none;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 20px;
+        }
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Form and Question Styles */
+        input[type="text"], input[type="date"] {
+            width: 100%;
+            padding: 10px;
+            margin: 5px 0 20px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        button {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 10px 10px 10px 0;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        button:hover {
+            background-color: #357abd;
+        }
+         button.clear-data-button {
+             background-color: #ff0000;
+         }
+         button.clear-data-button:hover {
+             background-color: #750000;
+         }
+
+        .question {
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+            padding-bottom: 40px; /* Space for labels */
+        }
+        .options {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 10px;
+            position: relative;
+        }
+        .option {
+            flex: 1;
+            text-align: center;
+            margin: 0 2px;
+            border: 2px solid #ddd;
+            background-color: #eee; /* Slightly grey for options */
+            cursor: pointer;
+            transition: background-color 0.3s, border-color 0.3s;
+            border-radius: 4px;
+            padding: 5px 0;
+            user-select: none; /* Prevent text selection on click */
+        }
+         .option:first-child { margin-left: 0; }
+         .option:last-child { margin-right: 0; }
+
+        .option.selected {
+            background-color: var(--primary-color);
+            color: white;
+            border-color: var(--primary-color);
+        }
+
+        .label {
+            position: absolute;
+            bottom: 10px;
+            font-size: 0.9em;
+            color: #555; /* Less prominent color for scale labels */
+            width: calc(100% - 30px); /* Account for padding */
+            text-align: center;
+            left: 15px; /* Align with padding */
+            right: 15px; /* Align with padding */
+        }
+        .label .left {
+            float: left;
+        }
+         .label .right {
+             float: right;
+         }
+         .label .center {
+             /* For DASS-21/GHQ-12 where middle options might have labels */
+             display: inline-block;
+             margin: 0 auto; /* Doesn't work with floats, might need specific positioning */
+         }
+
+         /* Specific Label Adjustments for scales */
+         .scale-0-10 .label .left { width: auto; } /* Allow left/right to be natural width */
+         .scale-0-10 .label .right { width: auto; }
+         .scale-0-10 .label { display: flex; justify-content: space-between; } /* Use flex for 0-10 */
+
+         .scale-0-3 .label { /* Positioning for 0, 1, 2, 3 scales */
+            display: flex;
+            justify-content: space-between;
+            width: calc(100% - 30px);
+            left: 15px;
+         }
+         .scale-0-3 .label span {
+             flex: 1;
+             text-align: center;
+         }
+
+
+        /* Results Tab Styles */
+        #results-content {
+             background-color: white;
+             border: 1px solid #ddd;
+             border-radius: 4px;
+             padding: 15px;
+        }
+
+         #results-content h3 {
+             margin-top: 20px;
+             margin-bottom: 10px;
+             border-bottom: 1px solid #eee;
+             padding-bottom: 5px;
+         }
+
+         .result-section {
+             margin-bottom: 20px;
+             padding-bottom: 20px;
+             border-bottom: 1px dashed #ddd;
+         }
+         .result-section:last-child {
+             border-bottom: none;
+             margin-bottom: 0;
+             padding-bottom: 0;
+         }
+
+        .result-item {
+            margin-bottom: 10px;
+        }
+        .result-item strong {
+            color: var(--primary-color);
+        }
+        .result-item .score {
+            font-weight: bold;
+            margin-right: 5px;
+        }
+         .interpretation-text {
+             font-size: 0.9em;
+             color: #555;
+             margin-top: 2px;
+         }
+          .interpretation-text.low, .interpretation-text.severe, .interpretation-text.very-severe, .interpretation-text.risk {
+             color: var(--danger-color);
+             font-weight: bold; /* Highlight risk/severe */
+          }
+           .interpretation-text.medium, .interpretation-text.moderate, .interpretation-text.mild {
+              color: var(--warning-color);
+              font-weight: bold; /* Highlight warning/moderate */
+           }
+            .interpretation-text.high, .interpretation-text.normal, .interpretation-text.excellent {
+                color: var(--success-color);
+                font-weight: bold; /* Highlight success/normal */
+            }
+
+
+         #chart-container {
+            margin-top: 20px;
+            background-color: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            padding: 15px;
+            height: 500px; /* Fixed height for the chart */
+            display: none; /* Hide by default, only show for PERMA results */
+         }
+
+        .unanswered-message {
+            color: var(--danger-color);
+            font-weight: bold;
+            margin-top: 15px;
+        }
+         .completion-message {
+             color: var(--primary-color);
+             margin-top: 15px;
+         }
+
+        @media (max-width: 768px) {
+            .tabs {
+                flex-direction: column;
+            }
+            .tab-button {
+                margin-bottom: 5px;
+                border-bottom: 1px solid var(--tab-inactive-color);
+            }
+             .tab-button.active {
+                 border-bottom-color: var(--primary-color);
+             }
+        }
+
+         @media (max-width: 600px) {
+            .option {
+                font-size: 9px; /* Further reduce font size */
+                margin: 0 1px; /* Reduce margin */
+                padding: 5px 0;
+            }
+             .label {
+                 font-size: 0.7em;
+                 bottom: 3px; /* Move labels up slightly */
+                 left: 10px;
+                 right: 10px;
+                 width: calc(100% - 20px);
+             }
+             .question {
+                 padding-bottom: 25px; /* Adjust padding for smaller labels */
+             }
+             .tab-button {
+                 font-size: 0.9em;
+                 padding: 8px 10px;
+             }
+        }
+            #perma-chart-container {
+                margin-top: 20px;
+                background-color: white;
+                border: 1px solid #ddd;
+                border-radius: 4px;
+                padding: 15px;
+                height: 500px; /* Fixed height for the PERMA chart container */
+                width: 100%; /* Full width */
+                box-sizing: border-box;
+                display: none; /* Hide by default */
+            }
+            #perma-chart-container canvas {
+                width: 100% !important;
+                height: 90% !important;
+            }
+        </style>
+</head>
+<body>
+    <h1>Công cụ Đánh giá Sức khỏe Tinh thần</h1>
+    <p>Công cụ này giúp bạn tự đánh giá một số khía cạnh về sức khỏe tinh thần và hạnh phúc dựa trên các thang đo PERMA, GHQ-12 và DASS-21.</p>
+
+    <div>
+        <label for="name">Họ tên:</label>
+        <input type="text" id="name" placeholder="Nhập họ tên của bạn">
+    </div>
+    <div>
+        <label for="date">Ngày làm test:</label>
+        <input type="date" id="date">
+    </div>
+
+    <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'perma')">PERMA Profiler</button>
+        <button class="tab-button" onclick="openTab(event, 'ghq12')">GHQ-12</button>
+        <button class="tab-button" onclick="openTab(event, 'dass21')">DASS-21</button>
+        <button class="tab-button" onclick="openTab(event, 'results')">Kết quả</button>
+    </div>
+
+    <div id="perma" class="tab-content active">
+        <h2>PERMA Profiler</h2>
+         <p>Đánh giá sức khỏe tinh thần và hạnh phúc dựa trên lý thuyết PERMA của Martin Seligma.</p>
+         <div class="legend">
+             <h3>Hãy trả lời 15 câu hỏi dựa trên cảm nhận của bạn trên thang điểm từ 0 (thấp nhất) đến 10 (cao nhất):</h3>
+              <p>Ví dụ: Nếu câu hỏi hỏi về mức độ vui vẻ và bạn cảm thấy mình rất vui vẻ, hãy chọn điểm 9 hoặc 10. Nếu bạn cảm thấy không vui vẻ chút nào, hãy chọn điểm 0.</p>
+         </div>
+        <div id="perma-questions"></div>
+    </div>
+
+    <div id="ghq12" class="tab-content">
+        <h2>GHQ-12 (General Health Questionnaire)</h2>
+         <p>Đánh giá các vấn đề sức khỏe tâm thần phổ biến trong 4 tuần gần đây.</p>
+         <div class="legend">
+             <h3>Vui lòng cho biết bạn có gặp các vấn đề sau đây trong khoảng 4 tuần trở lại đây KHÔNG?</h3>
+             <p>Thang điểm: 0 = Hoàn toàn không, 1 = Ít hơn thường lệ, 2 = Giống như thường lệ, 3 = Nhiều hơn thường lệ</p>
+         </div>
+        <div id="ghq12-questions"></div>
+    </div>
+
+    <div id="dass21" class="tab-content">
+        <h2>DASS-21 (Depression, Anxiety, Stress Scale)</h2>
+         <p>Đánh giá mức độ của các triệu chứng Trầm cảm, Lo âu và Stress trong tuần qua.</p>
+         <div class="legend">
+             <h3>Vui lòng đọc kỹ từng mục sau và chọn số phù hợp nhất cho thấy bạn đã trải qua tình trạng đó trong TUẦN QUA.</h3>
+             <p>Thang điểm: 0 = Không đúng với tôi chút nào, 1 = Đúng với tôi 1 phần, hay thỉnh thoảng mới đúng, 2 = Đúng với tôi phần lớn thời gian, hay phần lớn là đúng, 3 = Hoàn toàn đúng với tôi, hay đúng hầu hết thời gian</p>
+         </div>
+        <div id="dass21-questions"></div>
+    </div>
+
+    <div id="results" class="tab-content">
+        <h2>Kết quả Đánh giá</h2>
+         <p id="results-intro">Xem lại kết quả của các bài đánh giá đã hoàn thành.</p>
+        <div id="results-content">
+            <p class="completion-message">Vui lòng hoàn thành các bài test ở các tab trước để xem kết quả.</p>
+             </div>
+         <button class="clear-data-button" onclick="clearData()">Xóa tất cả dữ liệu đã lưu</button>
+         <div id="perma-chart-container" style="display: bla;">
+             <h3>Biểu đồ PERMA</h3>
+             <canvas id="perma-chart"></canvas>
+         </div>
+
+         <p></p>
+         <p> Tín đẹp trai 😊</p>
+         <button onclick="window.location.href='https://fb.com/trungtin0105';">
+             Nếu bạn cần tìm hiểu thêm hoặc cần hỗ trợ, 👉 hãy nhấn vào đây nghen!
+         </button>
+          <p></p>
+
+    </div>
+
+    <script>
+        // --- Question Data ---
+        const permaQuestions = [
+            /*1 A*/ "Bạn có thường xuyên cảm thấy mình đang tiến gần hơn tới các mục tiêu của mình?",
+            /*2 E*/ "Bạn có thường xuyên bị cuốn hút hoặc chìm đắm vào những việc mình đang làm?",
+            /*3 P*/ "Nhìn chung, bạn có thường xuyên cảm thấy vui vẻ không?",
+            /*4 A*/ "Bạn có thường xuyên đạt được các mục tiêu quan trọng mà bạn tự đặt ra cho mình?",
+            /*5 M*/ "Nhìn chung, bạn có sống một cuộc sống có ý nghĩa và mục đích không? (Nếu có thì ở mức độ nào?)",
+            /*6 R*/ "Khi bạn cần, bạn có thường nhận được sự hỗ trợ và giúp đỡ của người khác không?",
+            /*7 M*/ "Nhìn chung, bạn có cảm thấy những gì mình làm trong cuộc đời mình là có giá trị và xứng đáng không? (Nếu có thì ở mức độ nào?)",
+            /*8 E*/ "Nhìn chung, bạn có cảm thấy phấn khích và thích thú với những điều xung quanh? (Nếu có thì ở mức độ nào?)",
+            /*9 P*/ "Nhìn chung, bạn có thường xuyên cảm thấy tích cực không?",
+            /*10 A*/ "Bạn có thường xuyên có thể xử lý hết các trách nhiệm của mình (cả trong công việc và ở gia đình) không?",
+            /*11 E*/ "Bạn có thường xuyên có trải nghiệm làm gì đó mình thích và quên không để ý bao nhiêu thời gian đã trôi qua?",
+            /*12 R*/ "Bạn có cảm thấy mình đang được yêu thương không? (Nếu có thì ở mức độ nào?)",
+            /*13 M*/ "Bạn cảm thấy mình có định hướng trong cuộc sống đến mức nào?",
+            /*14 R*/ "Bạn hài lòng với các mối quan hệ cá nhân của mình đến mức nào?",
+            /*15 P/Happiness*/ "Nhìn chung, bạn hài lòng hoặc mãn nguyện hoặc với cuộc sống của mìnhh đến mức nào?",
+        ];
+         const permaLabelsLeft = [ "Không bao giờ", "Không bao giờ", "Không bao giờ", "Không bao giờ", "Hoàn toàn không", "Không bao giờ", "Hoàn toàn không", "Hoàn toàn không", "Không bao giờ", "Không bao giờ", "Không bao giờ", "Hoàn toàn không", "Hoàn toàn không", "Hoàn toàn không", "Hoàn toàn không", ];
+         const permaLabelsRight = [ "Luôn luôn", "Luôn luôn", "Luôn luôn", "Luôn luôn", "Hoàn toàn có", "Luôn luôn", "Hoàn toàn có", "Hoàn toàn có", "Luôn luôn", "Luôn luôn", "Luôn luôn", "Hoàn toàn có", "Hoàn toàn có", "Hoàn toàn hài lòng", "Hoàn toàn hài lòng", ];
+         const permaMapping = { // Mapping questions (0-indexed) to PERMA dimensions (based on your original code)
+             P: [2, 8, 14], // Q3, Q9, Q15
+             E: [1, 7, 10], // Q2, Q8, Q11
+             R: [5, 11, 13], // Q6, Q12, Q14
+             M: [4, 6, 12], // Q5, Q7, Q13
+             A: [0, 3, 9], // Q1, Q4, Q10
+         };
+
+        const ghq12Questions = [
+            "Bạn có cảm thấy luôn khoẻ mạnh không?", // Ngược
+            "Bạn có cảm thấy cần thêm chút thuốc ngủ không?",
+            "Bạn có cảm thấy luôn bị căng thẳng không?",
+            "Bạn có cảm thấy không thể vượt qua những khó khăn của mình không?",
+            "Bạn có cảm thấy không thể tập trung được khi làm việc không?",
+            "Bạn có cảm thấy hay quên hơn thường lệ không?",
+            "Bạn có cảm thấy cuộc sống hàng ngày thật vô ích không?", // Ngược
+            "Bạn có cảm thấy mình không có khả năng quyết định mọi việc không?",
+            "Bạn có cảm thấy mình không được hưởng những hoạt động thường ngày của bạn không?", // Ngược
+            "Bạn có cảm thấy mình không có khả năng đối diện với các khó khăn của mình không?",
+            "Bạn có cảm thấy hay lo lắng và khó ngủ không?",
+            "Bạn có cảm thấy luôn có thể làm mọi việc hiệu quả không?", // Ngược
+        ];
+         const ghq12Labels = ["Hoàn toàn không", "Ít hơn thường lệ", "Giống như thường lệ", "Nhiều hơn thường lệ"];
+         const ghq12ReverseScored = [0, 6, 8, 11]; // Indices of questions that are reverse scored (0-indexed)
+
+        const dass21Questions = [
+             "Tôi thấy mình khó mà bình tĩnh lại được", // S1
+             "Tôi thấy khô miệng", // A1
+             "Tôi không còn cảm thấy tích cực nào cả", // D1
+             "Tôi cảm thấy khó thở (ví dụ: thở gấp, hụt hơi dù không gắng sức)", // A2
+             "Tôi thấy mình khó mà bắt đầu chuyển động được", // D2
+             "Tôi có xu hướng phản ứng thái quá trước những tình huống khó khăn", // S2
+             "Tôi thấy mình run rẩy", // A3
+             "Tôi thấy mình tiêu hao rất nhiều năng lượng lo lắng", // S3
+             "Tôi thấy buồn và chán nản", // D3
+             "Tôi biết mình sẽ lo âu", // A4
+             "Tôi không thấy hứng thú với bất cứ điều gì", // D4
+             "Tôi thấy mình bồn chồn không yên", // S4
+             "Tôi thấy khó thư giãn", // A5
+             "Tôi thấy mình chán nản và vô vọng", // D5
+             "Tôi lo lắng dễ dàng", // A6
+             "Tôi thấy mình không xứng đáng gì cả", // D6
+             "Tôi cảm thấy dễ bị xúc phạm", // S5
+             "Tôi thấy mình gần như hoảng loạn", // A7
+             "Tôi thấy mình không còn yêu thích bất cứ điều gì", // D7
+             "Tôi thấy hơi lo lắng khi phải đối mặt với một tình huống có thể làm mình hoảng loạn", // S6
+             "Tôi thấy hơi đổ mồ hôi (ví dụ: mồ hôi tay) mặc dù trời không nóng bức", // S7
+        ];
+         // Mapping questions (0-indexed) to DASS-21 dimensions
+         const dass21Mapping = {
+             'Trầm cảm': [2, 4, 8, 10, 13, 15, 18], // D1-D7
+             'Lo âu': [1, 3, 6, 9, 12, 14, 17], // A1-A7
+             'Stress': [0, 5, 7, 11, 16, 19, 20], // S1-S7
+         };
+         const dass21Labels = ["Không đúng với tôi chút nào", "Đúng với tôi 1 phần, hay thỉnh thoảng mới đúng", "Đúng với tôi phần lớn thời gian, hay phần lớn là đúng", "Hoàn toàn đúng với tôi, hay đúng hầu hết thời gian"];
+
+
+        // --- Interpretation Data (from Manual) ---
+
+        // PERMA Interpretation
+        const permaDimensionInterpretations = {
+             P: { low: "Cảm xúc tích cực thấp có thể liên quan trầm cảm hoặc stress cao. Khuyến nghị tập trung cải thiện trạng thái cảm xúc tích cực qua can thiệp tâm lý.", medium: "Mức độ cảm xúc tích cực trung bình.", high: "Mức độ cảm xúc tích cực cao." },
+             E: { low: "Tham gia thấp biểu hiện thiếu động lực hoặc khó tập trung. Khuyến khích phát triển kỹ năng tập trung, tìm hoạt động phù hợp.", medium: "Mức độ gắn kết trung bình.", high: "Mức độ gắn kết cao." },
+             R: { low: "Mối quan hệ xã hội yếu có thể tạo cảm nhận bị cô lập và suy giảm sức khỏe tinh thần. Khuyến nghị tăng cường kết nối xã hội, nhóm hỗ trợ.", medium: "Mức độ mối quan hệ trung bình.", high: "Mức độ mối quan hệ cao." },
+             M: { low: "Thiếu ý nghĩa sống gây cảm giác mất phương hướng. Khuyến khích khám phá giá trị cá nhân và mục đích sống.", medium: "Mức độ ý nghĩa sống trung bình.", high: "Mức độ ý nghĩa sống cao." },
+             A: { low: "Thành tựu thấp có thể gây cảm giác bất lực hoặc thiếu kiểm soát. Hỗ trợ thiết lập mục tiêu thực tế và phát triển kỹ năng quản lý.", medium: "Mức độ cảm nhận thành tựu trung bình.", high: "Mức độ cảm nhận thành tựu cao." },
+             // Manual also lists Negative Emotions, Health, Loneliness but without scoring from provided questions
+             'Cảm xúc tiêu cực': { low: "Mức độ cảm xúc tiêu cực thấp.", medium: "Mức độ cảm xúc tiêu cực trung bình.", high: "Điểm cao phản ánh cảm xúc tiêu cực thường xuyên (lo âu, buồn bã, tức giận). Cần chú ý can thiệp giảm stress và trị liệu tâm lý nếu cần." },
+             'Sức khỏe': { low: "Sức khỏe được đánh giá là kém, ảnh hưởng tổng thể đến cảm nhận hạnh phúc. Khuyến khích chăm sóc sức khỏe thể chất.", medium: "Sức khỏe ở mức trung bình.", high: "Sức khỏe được đánh giá là tốt." },
+             'Cô đơn': { low: "Mức độ cô đơn thấp.", medium: "Mức độ cô đơn trung bình.", high: "Điểm cao biểu hiện cảm giác cô đơn nhiều. Khuyến nghị tăng cường hỗ trợ xã hội và hoạt động cộng đồng." }
+        };
+         const permaTotalInterpretations = {
+             excellent: "Mức độ hạnh phúc tuyệt vời. Tiếp tục duy trì và phát triển các khía cạnh này!", // 9.0 - 10.0
+             high: "Hạnh phúc ở mức trung bình cao. Bạn đang có nền tảng tốt về sức khỏe tinh thần.", // 7.0 - 8.9
+             medium: "Có thể cải thiện thêm để nâng mức độ hạnh phúc. Hãy xem xét các lĩnh vực có điểm thấp để tập trung phát triển.", // 5.0 - 6.9
+             risk: "Có nguy cơ gặp rối loạn sức khỏe tinh thần. Hãy cân nhắc tìm kiếm sự hỗ trợ từ chuyên gia tâm lý để cải thiện mức độ hạnh phúc và sức khỏe tinh thần tổng thể.", // < 5.0
+         };
+
+         // DASS-21 Interpretation (from Manual)
+         const dass21InterpretationRanges = {
+             'Trầm cảm': [{ max: 4, level: 'Bình thường' }, { max: 6, level: 'Nhẹ' }, { max: 10, level: 'Vừa' }, { max: 13, level: 'Nặng' }, { max: Infinity, level: 'Rất nặng' }],
+             'Lo âu': [{ max: 3, level: 'Bình thường' }, { max: 5, level: 'Nhẹ' }, { max: 7, level: 'Vừa' }, { max: 9, level: 'Nặng' }, { max: Infinity, level: 'Rất nặng' }],
+             'Stress': [{ max: 7, level: 'Bình thường' }, { max: 9, level: 'Nhẹ' }, { max: 12, level: 'Vừa' }, { max: 16, level: 'Nặng' }, { max: Infinity, level: 'Rất nặng' }],
+         };
+         const dass21InterpretationText = {
+              'Bình thường': "Không có vấn đề đáng kể ở mức độ này.",
+              'Nhẹ': "Có biểu hiện nhẹ. Khuyến nghị tăng cường hoạt động thể chất, chăm sóc bản thân, các hoạt động kết nối xã hội.",
+              'Vừa': "Có biểu hiện vừa. Khuyến nghị tìm kiếm sự giúp đỡ từ bác sĩ tâm thần và nhà tâm lý để được hỗ trợ, trị liệu hợp lý (đối với Trầm cảm, Lo âu). Khuyến nghị tìm gặp nhà tâm lý nhằm tháo gỡ khúc mắc tâm lý và có những cách ứng phó stress hiệu quả hơn (đối với Stress).",
+              'Nặng': "Có biểu hiện nặng. Khuyến nghị tìm kiếm sự giúp đỡ từ bác sĩ tâm thần và nhà tâm lý để được hỗ trợ, trị liệu hợp lý.",
+              'Rất nặng': "Có biểu hiện rất nặng. Khuyến nghị tìm kiếm sự giúp đỡ từ bác sĩ tâm thần và nhà tâm lý để được hỗ trợ, trị liệu hợp lý khẩn cấp."
+         };
+
+
+         // GHQ-12 Interpretation (from Manual)
+         const ghq12Interpretation = {
+             threshold1: { score: 15, text: "Điểm trên 15 gợi ý bằng chứng có vấn đề tâm lý và thể chất. Khuyến nghị thăm khám tổng quan về cả sức khỏe thể chất lẫn tinh thần và tìm kiếm sự hỗ trợ kịp thời." },
+             threshold2: { score: 20, text: "Điểm trên 20 gợi ý các vấn đề sức khỏe nghiêm trọng và tổn thương tâm lý. Khuyến nghị thăm khám tổng quan về cả sức khỏe thể chất lẫn tinh thần và tìm kiếm sự hỗ trợ kịp kịp thời từ các bác sĩ, nhà tâm lý." },
+         };
+
+
+        // --- Global Variables ---
+        let permaChart = null; // To hold the Chart.js instance for PERMA
+        let allResults = {}; // To store results from all tests
+
+        // --- Tab Management ---
+        function openTab(evt, tabName) {
+            let tabContents = document.querySelectorAll('.tab-content');
+            tabContents.forEach(content => content.classList.remove('active'));
+
+            let tabButtons = document.querySelectorAll('.tab-button');
+            tabButtons.forEach(button => button.classList.remove('active'));
+
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            // If switching to results tab, display results
+            if (tabName === 'results') {
+                displayAllResults();
+            } else {
+                 // Hide PERMA chart when switching away from results
+                 document.getElementById('perma-chart-container').style.display = 'none';
+            }
+        }
+
+        // --- Question Rendering ---
+        function renderQuestions(containerId, questions, labels, scaleType = '0-10', reverseScored = []) {
+            const container = document.getElementById(containerId);
+            container.innerHTML = ''; // Clear previous questions
+
+            const optionsHtml = (scaleType) => {
+                let html = '';
+                let values = [];
+                let valueLabels = [];
+
+                if (scaleType === '0-10') {
+                    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
+                } else if (scaleType === '0-3') {
+                    values = [0, 1, 2, 3];
+                }
+
+                html = values.map(value => `<div class="option" data-value="${value}">${value}</div>`).join('');
+                return html;
+            };
+
+             const labelHtml = (scaleType, index, labels) => {
+                 if (scaleType === '0-10') {
+                     return `<div class="label scale-${scaleType}"><span class="left">${labels[index*2]}</span><span class="right">${labels[index*2 + 1]}</span></div>`;
+                 } else if (scaleType === '0-3') {
+                     return `<div class="label scale-${scaleType}"><span>${labels[0]}</span><span>${labels[1]}</span><span>${labels[2]}</span><span>${labels[3]}</span></div>`;
+                 }
+                 return ''; // No labels for other types
+             };
+
+
+            questions.forEach((q, index) => {
+                container.innerHTML += `
+                    <div class="question" data-question-index="${index}" data-scale-type="${scaleType}" ${reverseScored.includes(index) ? 'data-reverse-scored="true"' : ''}>
+                        <p><strong>${index + 1}.</strong> ${q}</p>
+                        <div class="options">
+                            ${optionsHtml(scaleType)}
+                        </div>
+                        ${labelHtml(scaleType, index, labels)}
+                    </div>
+                `;
+            });
+
+            // Add click listeners to options
+            container.querySelectorAll('.option').forEach(option => {
+                option.addEventListener('click', function() {
+                    const optionsContainer = this.parentElement;
+                    const questionElement = optionsContainer.parentElement;
+                    const questionIndex = parseInt(questionElement.getAttribute('data-question-index'));
+                    const value = parseInt(this.getAttribute('data-value'));
+                    const scale = questionElement.getAttribute('data-scale-type');
+                     const containerId = questionElement.parentElement.id; // e.g., perma-questions
+
+                    selectOption(containerId, questionIndex, value, scale);
+                });
+            });
+        }
+
+        function selectOption(containerId, questionIndex, value, scaleType) {
+            const container = document.getElementById(containerId);
+            const questionElement = container.querySelector(`.question[data-question-index="${questionIndex}"]`);
+            const options = questionElement.querySelectorAll('.option');
+
+            options.forEach(option => option.classList.remove('selected'));
+            questionElement.querySelector(`.option[data-value="${value}"]`).classList.add('selected');
+
+             // Store selected value directly on the question element
+             questionElement.setAttribute('data-selected-value', value);
+        }
+
+        function getSelectedScore(containerId, questionIndex) {
+             const container = document.getElementById(containerId);
+             const questionElement = container.querySelector(`.question[data-question-index="${questionIndex}"]`);
+             const selectedValue = questionElement ? questionElement.getAttribute('data-selected-value') : null;
+             return selectedValue !== null ? parseInt(selectedValue) : null; // Return null if not selected
+        }
+
+        // --- Scoring Logic ---
+
+        function calculateAllScores() {
+            const resultsContentDiv = document.getElementById('results-content');
+             resultsContentDiv.innerHTML = ''; // Clear previous results
+
+            const name = document.getElementById('name').value || 'Người dùng';
+            const date = document.getElementById('date').value || new Date().toLocaleDateString();
+
+            allResults = {
+                 name: name,
+                 date: date,
+                 perma: null,
+                 ghq12: null,
+                 dass21: null,
+            };
+
+             // Calculate PERMA
+            const permaScores = calculatePERMAScores();
+            if (permaScores) {
+                 allResults.perma = permaScores;
+            } else {
+                 resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test PERMA Profiler.</p>';
+            }
+
+             // Calculate GHQ-12
+             const ghq12Scores = calculateGHQ12Scores();
+             if (ghq12Scores !== null) { // GHQ-12 calculates total, 0 is a valid score
+                  allResults.ghq12 = ghq12Scores;
+             } else {
+                  resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test GHQ-12.</p>';
+             }
+
+             // Calculate DASS-21
+             const dass21Scores = calculateDASS21Scores();
+              if (dass21Scores !== null) { // DASS-21 calculates subscales, 0 is valid
+                  allResults.dass21 = dass21Scores;
+              } else {
+                  resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test DASS-21.</p>';
+              }
+
+
+             // Save results if at least one test is completed successfully
+            if (allResults.perma || allResults.ghq12 || allResults.dass21) {
+                 saveResults(allResults);
+                 displayAllResults(allResults); // Pass results to display
+            } else {
+                 // If no tests completed, show message
+                 resultsContentDiv.innerHTML = '<p class="unanswered-message">Vui lòng hoàn thành ít nhất một bài test để xem kết quả.</p>';
+            }
+
+
+        }
+
+        function calculatePERMAScores() {
+             let unansweredCount = 0;
+             const rawScores = {};
+
+             for (let i = 0; i < permaQuestions.length; i++) {
+                 const score = getSelectedScore('perma-questions', i);
+                 if (score === null) {
+                     unansweredCount++;
+                     rawScores[i] = 0; // Use 0 for calculation if missing (after check)
+                 } else {
+                     rawScores[i] = score;
+                 }
+             }
+
+             // Check for >20% missing data (more than 3 questions out of 15)
+             if (unansweredCount > Math.floor(permaQuestions.length * 0.2)) {
+                  // Handle this in calculateAllScores
+                  return null; // Indicate incomplete
+             }
+
+             const dimensionScores = {}; // PERMA dimension averages
+             for (const dimension in permaMapping) {
+                 let sum = 0;
+                 permaMapping[dimension].forEach(qIndex => {
+                     sum += rawScores[qIndex];
+                 });
+                 dimensionScores[dimension] = sum / permaMapping[dimension].length;
+             }
+
+             // Assume Q15 (index 14) is the 'Happiness' score for total calculation
+             let happinessScore = rawScores[14];
+
+             // Calculate Total PERMA score using the manual's formula: (P + E + R + M + A + Happiness) / 6
+              const totalPermaAverage = (dimensionScores.P + dimensionScores.E + dimensionScores.R + dimensionScores.M + dimensionScores.A + happinessScore) / 6;
+
+
+             return {
+                 dimensionScores: dimensionScores, // PERMA dimension averages
+                 happinessScore: happinessScore, // Q15 score
+                 totalPermaAverage: totalPermaAverage, // Total PERMA score / 6
+             };
+        }
+
+        function calculateGHQ12Scores() {
+             let totalScore = 0;
+             let answeredCount = 0;
+
+             for (let i = 0; i < ghq12Questions.length; i++) {
+                 const score = getSelectedScore('ghq12-questions', i);
+                 if (score !== null) {
+                     answeredCount++;
+                     // GHQ-12 standard scoring often converts 0,1,2,3 scale
+                     // Manual implies summing the 0-3 scores directly to get 0-36 range
+                     // Let's follow manual and sum 0-3 scores.
+                     // Need to check for reverse scored items
+                     const finalScore = ghq12ReverseScored.includes(i) ? (3 - score) : score;
+                     totalScore += finalScore;
+                 }
+             }
+
+             if (answeredCount < ghq12Questions.length) {
+                  return null; // Indicate incomplete
+             }
+
+             return {
+                 totalScore: totalScore,
+             };
+        }
+
+        function calculateDASS21Scores() {
+             const scores = {};
+             let answeredCount = 0;
+
+             for (const dimension in dass21Mapping) {
+                 let sum = 0;
+                 dass21Mapping[dimension].forEach(qIndex => {
+                      const score = getSelectedScore('dass21-questions', qIndex);
+                      if (score !== null) {
+                          sum += score; // Sum raw 0-3 scores
+                           answeredCount++;
+                      }
+                 });
+                 scores[dimension] = sum;
+             }
+
+             if (answeredCount < dass21Questions.length) {
+                 return null; // Indicate incomplete
+             }
+
+
+             return scores; // Returns { 'Trầm cảm': score, 'Lo âu': score, 'Stress': score }
+        }
+
+        // --- Display Results ---
+
+        function displayAllResults(results = allResults) {
+            const resultsContentDiv = document.getElementById('results-content');
+            resultsContentDiv.innerHTML = ''; // Clear previous content
+
+            // Check if results data is available
+            if (!results || (!results.perma && !results.ghq12 && !results.dass21)) {
+                const p = document.createElement('p');
+                p.className = 'completion-message';
+                p.textContent = 'Vui lòng hoàn thành ít nhất một bài test để xem kết quả.';
+                resultsContentDiv.appendChild(p);
+                document.getElementById('perma-chart-container').style.display = 'none'; // Hide chart
+                if (permaChart) {
+                    permaChart.destroy();
+                    permaChart = null;
+                }
+                return;
+            }
+
+            // Display name and date
+            const nameP = document.createElement('p');
+            const nameStrong = document.createElement('strong');
+            nameStrong.textContent = 'Họ tên: ';
+            nameP.appendChild(nameStrong);
+            nameP.appendChild(document.createTextNode(results.name));
+            resultsContentDiv.appendChild(nameP);
+
+            const dateP = document.createElement('p');
+            const dateStrong = document.createElement('strong');
+            dateStrong.textContent = 'Ngày làm test: ';
+            dateP.appendChild(dateStrong);
+            dateP.appendChild(document.createTextNode(results.date));
+            resultsContentDiv.appendChild(dateP);
+
+            // Display PERMA Results
+            if (results.perma) {
+                const permaSection = document.createElement('div');
+                permaSection.className = 'result-section';
+
+                const permaTitle = document.createElement('h3');
+                permaTitle.textContent = 'Kết quả PERMA Profiler';
+                permaSection.appendChild(permaTitle);
+
+                const dimensions = ['P', 'E', 'R', 'M', 'A'];
+                const dimensionNames = {
+                    P: 'Cảm xúc tích cực',
+                    E: 'Sự gắn kết',
+                    R: 'Mối quan hệ',
+                    M: 'Ý nghĩa',
+                    A: 'Thành tựu'
+                };
+
+                dimensions.forEach(dim => {
+                    const p = document.createElement('p');
+                    p.className = 'result-item';
+                    p.innerHTML = `<span class="result-dimension">${dim} - ${dimensionNames[dim]}:</span> <span class="score">${results.perma.dimensionScores[dim].toFixed(2)}</span> ${getPERMADimensionInterpretation(results.perma.dimensionScores[dim], dim)}`;
+                    permaSection.appendChild(p);
+                });
+
+                // Happiness score
+                const happinessP = document.createElement('p');
+                happinessP.className = 'result-item';
+                const happinessScore = results.perma.happinessScore;
+                const happinessClass = happinessScore >= 8 ? 'high' : (happinessScore >= 5 ? 'medium' : 'low');
+                const happinessText = happinessScore >= 8 ? 'Cao' : (happinessScore >= 5 ? 'Trung bình' : 'Thấp');
+                happinessP.innerHTML = `<span class="result-dimension">H - Hài lòng cuộc sống (Câu 15):</span> <span class="score">${happinessScore}</span> <span class="interpretation-text ${happinessClass}">Điểm: ${happinessText}</span>`;
+                permaSection.appendChild(happinessP);
+
+                // Total PERMA score
+                const totalP = document.createElement('p');
+                totalP.className = 'result-item';
+                const totalScore = results.perma.totalPermaAverage.toFixed(2);
+                const totalClass = getPERMATotalInterpretationLevel(results.perma.totalPermaAverage);
+                const totalText = getPERMATotalInterpretation(results.perma.totalPermaAverage);
+                totalP.innerHTML = `<span class="result-dimension highlight">Điểm PERMA tổng hợp:</span> <span class="score">${totalScore}</span> <span class="interpretation-text ${totalClass}">${totalText}</span>`;
+                permaSection.appendChild(totalP);
+
+                const noteP = document.createElement('p');
+                noteP.className = 'result-item';
+                noteP.innerHTML = `<em>Lưu ý: Manual cũng có diễn giải cho Cảm xúc tiêu cực, Sức khỏe, Cô đơn nhưng các mục này không nằm trong công thức tính điểm PERMA tổng và cần các câu hỏi riêng để đánh giá.</em>`;
+                permaSection.appendChild(noteP);
+
+                resultsContentDiv.appendChild(permaSection);
+
+                displayPERMAChart(results.perma.dimensionScores); // Show chart
+            } else {
+                document.getElementById('perma-chart-container').style.display = 'none'; // Hide chart if no results
+                if (permaChart) {
+                    permaChart.destroy();
+                    permaChart = null;
+                }
+            }
+
+            // Display GHQ-12 Results
+            if (results.ghq12) {
+                const ghqSection = document.createElement('div');
+                ghqSection.className = 'result-section';
+
+                const ghqTitle = document.createElement('h3');
+                ghqTitle.textContent = 'Kết quả GHQ-12';
+                ghqSection.appendChild(ghqTitle);
+
+                const ghqP = document.createElement('p');
+                ghqP.className = 'result-item';
+                ghqP.innerHTML = `<span class="result-dimension">Tổng điểm GHQ-12:</span> <span class="score">${results.ghq12.totalScore}</span> <span class="interpretation-text">${getGHQ12Interpretation(results.ghq12.totalScore)}</span>`;
+                ghqSection.appendChild(ghqP);
+
+                resultsContentDiv.appendChild(ghqSection);
+            }
+
+            // Display DASS-21 Results
+            if (results.dass21) {
+                const dassSection = document.createElement('div');
+                dassSection.className = 'result-section';
+
+                const dassTitle = document.createElement('h3');
+                dassTitle.textContent = 'Kết quả DASS-21';
+                dassSection.appendChild(dassTitle);
+
+                const depressionP = document.createElement('p');
+                depressionP.className = 'result-item';
+                depressionP.innerHTML = `<span class="result-dimension">Điểm Trầm cảm:</span> <span class="score">${results.dass21['Trầm cảm']}</span> <span class="interpretation-text ${getDASS21InterpretationLevel(results.dass21['Trầm cảm'], 'Trầm cảm')}">${getDASS21InterpretationText(results.dass21['Trầm cảm'], 'Trầm cảm')}</span>`;
+                dassSection.appendChild(depressionP);
+
+                const anxietyP = document.createElement('p');
+                anxietyP.className = 'result-item';
+                anxietyP.innerHTML = `<span class="result-dimension">Điểm Lo âu:</span> <span class="score">${results.dass21['Lo âu']}</span> <span class="interpretation-text ${getDASS21InterpretationLevel(results.dass21['Lo âu'], 'Lo âu')}">${getDASS21InterpretationText(results.dass21['Lo âu'], 'Lo âu')}</span>`;
+                dassSection.appendChild(anxietyP);
+
+                const stressP = document.createElement('p');
+                stressP.className = 'result-item';
+                stressP.innerHTML = `<span class="result-dimension">Điểm Stress:</span> <span class="score">${results.dass21['Stress']}</span> <span class="interpretation-text ${getDASS21InterpretationLevel(results.dass21['Stress'], 'Stress')}">${getDASS21InterpretationText(results.dass21['Stress'], 'Stress')}</span>`;
+                dassSection.appendChild(stressP);
+
+                resultsContentDiv.appendChild(dassSection);
+            }
+        }
+
+        // --- Interpretation Helper Functions ---
+
+        function getPERMADimensionInterpretation(score, dimension) {
+             let level = "";
+             let interpretation = "";
+
+             if (score >= 8) {
+                 level = "Cao";
+                 interpretation = permaDimensionInterpretations[dimension].high;
+             } else if (score >= 5) {
+                 level = "Trung bình";
+                 interpretation = permaDimensionInterpretations[dimension].medium;
+             } else { // score 0-4
+                 level = "Thấp";
+                 interpretation = permaDimensionInterpretations[dimension].low;
+             }
+
+             return `<span class="interpretation-text ${level === 'Cao' ? 'high' : (level === 'Trung bình' ? 'medium' : 'low')}">Mức độ: ${level}. ${interpretation}</span>`;
+        }
+
+        function getPERMATotalInterpretation(average) {
+             if (average >= 9.0) return permaTotalInterpretations.excellent;
+             if (average >= 7.0) return permaTotalInterpretations.high;
+             if (average >= 5.0) return permaTotalInterpretations.medium;
+             return permaTotalInterpretations.risk; // < 5.0
+        }
+
+         function getPERMATotalInterpretationLevel(average) {
+             if (average >= 9.0) return 'excellent';
+             if (average >= 7.0) return 'high';
+             if (average >= 5.0) return 'medium';
+             return 'risk'; // < 5.0
+         }
+
+
+         function getDASS21InterpretationLevel(score, dimension) {
+              const ranges = dass21InterpretationRanges[dimension];
+              for (const range of ranges) {
+                  if (score <= range.max) {
+                      switch(range.level) {
+                          case 'Bình thường': return 'normal';
+                          case 'Nhẹ': return 'mild';
+                          case 'Vừa': return 'moderate';
+                          case 'Nặng': return 'severe';
+                          case 'Rất nặng': return 'very-severe';
+                      }
+                  }
+              }
+              return ''; // Should not happen
+         }
+
+
+        function getDASS21InterpretationText(score, dimension) {
+             const ranges = dass21InterpretationRanges[dimension];
+             let level = "";
+             for (const range of ranges) {
+                 if (score <= range.max) {
+                     level = range.level;
+                     break;
+                 }
+             }
+             const interpretationDetail = dass21InterpretationText[level];
+             return `Mức độ: ${level}. ${interpretationDetail}`;
+        }
+
+         function getGHQ12Interpretation(score) {
+              let interpretation = "";
+              let interpretationClass = "normal";
+
+              if (score > ghq12Interpretation.threshold2.score) {
+                   interpretation = ghq12Interpretation.threshold2.text;
+                   interpretationClass = "very-severe"; // Or risk
+              } else if (score > ghq12Interpretation.threshold1.score) {
+                   interpretation = ghq12Interpretation.threshold1.text;
+                   interpretationClass = "risk"; // Or severe
+              } else {
+                  interpretation = "Điểm trong giới hạn bình thường, cho thấy không có bằng chứng đáng kể về vấn đề sức khỏe tâm lý phổ biến.";
+                  interpretationClass = "normal";
+              }
+              return interpretation; // Interpretation text includes level implicitly
+         }
+
+
+        // --- Charting ---
+
+        function displayPERMAChart(permaDimensionScores) {
+            const chartContainer = document.getElementById('perma-chart-container');
+            chartContainer.style.display = 'block'; // Show the chart container
+
+            const ctx = document.getElementById('perma-chart').getContext('2d');
+
+            if (permaChart) {
+                permaChart.destroy();
+            }
+
+            permaChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Cảm xúc tích cực (P)', 'Sự gắn kết (E)', 'Mối quan hệ (R)', 'Ý nghĩa (M)', 'Thành tựu (A)'],
+                    datasets: [{
+                        label: 'Điểm các khía cạnh PERMA',
+                        data: [permaDimensionScores.P, permaDimensionScores.E, permaDimensionScores.R, permaDimensionScores.M, permaDimensionScores.A],
+                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                        borderColor: 'rgba(74, 144, 226, 1)',
+                        pointBackgroundColor: 'rgba(74, 144, 226, 1)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgba(74, 144, 226, 1)'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 10,
+                            ticks: {
+                                 beginAtZero: true,
+                                 stepSize: 2,
+                                 maxTicksLimit: 6,
+                                 callback: function(value) {
+                                     // Only show integer ticks
+                                     if (Number.isInteger(value)) {
+                                         return value;
+                                     }
+                                 }
+                             },
+                             pointLabels: {
+                                 font: { size: 11 }
+                             },
+                              grid: { circular: true } // Make radar grid circular
+                        }
+                    },
+                    plugins: {
+                         legend: { position: 'top' },
+                         tooltip: {
+                              callbacks: {
+                                   label: function(context) {
+                                        let label = context.dataset.label || '';
+                                        if (label) label += ': ';
+                                        label += context.parsed.r.toFixed(2); // Show score with 2 decimals
+                                        const dimensionLetter = context.label.split(' ')[0]; // Get 'P', 'E', etc.
+                                        // Find full interpretation text for tooltip
+                                        const interpretationSpan = getPERMADimensionInterpretation(context.parsed.r, dimensionLetter);
+                                        const interpretationText = interpretationSpan.replace(/<[^>]*>/g, ''); // Remove HTML tags
+                                        return [label, interpretationText];
+                                   }
+                              }
+                         }
+                    }
+                }
+            });
+        }
+
+
+        // --- Data Persistence ---
+        function saveResults(results) {
+            // Saving only the latest result for this example
+            localStorage.setItem('latestAssessmentResults', JSON.stringify(results));
+            console.log('Results saved:', results);
+        }
+
+        function loadResults() {
+            const savedResults = localStorage.getItem('latestAssessmentResults');
+            if (savedResults) {
+                allResults = JSON.parse(savedResults);
+                console.log('Results loaded:', allResults);
+                // Optionally pre-fill name/date fields if saved
+                document.getElementById('name').value = allResults.name || '';
+                document.getElementById('date').value = allResults.date || '';
+
+                 // Restore selections on questions? This would be complex, maybe skip for simplicity.
+                 // Instead, rely on displaying loaded results in the results tab.
+            }
+        }
+
+        function clearData() {
+            localStorage.removeItem('latestAssessmentResults');
+            allResults = {}; // Clear in-memory results
+            document.getElementById('results-content').innerHTML = '<p class="completion-message">Dữ liệu đã được xóa. Vui lòng hoàn thành lại các bài test.</p>';
+             document.getElementById('name').value = '';
+             document.getElementById('date').value = '';
+
+             // Clear selected options visually
+             document.querySelectorAll('.option').forEach(option => option.classList.remove('selected'));
+             document.querySelectorAll('.question').forEach(q => q.removeAttribute('data-selected-value'));
+
+
+            if (permaChart) {
+                permaChart.destroy();
+                permaChart = null;
+            }
+             document.getElementById('perma-chart-container').style.display = 'none';
+
+            alert('Đã xóa tất cả dữ liệu đã lưu trong trình duyệt.');
+        }
+
+
+        // --- Initialization ---
+        document.addEventListener('DOMContentLoaded', () => {
+             // Add "Tính điểm" button inside the Results tab, before the clear button
+             const resultsContentDiv = document.getElementById('results-content');
+             const calculateButton = document.createElement('button');
+             calculateButton.textContent = 'Tính điểm & Xem kết quả';
+             calculateButton.onclick = calculateAllScores;
+             resultsContentDiv.parentNode.insertBefore(calculateButton, resultsContentDiv); // Insert before results-content div
+
+
+            renderQuestions('perma-questions', permaQuestions, permaLabelsLeft.concat(permaLabelsRight), '0-10'); // 0-10 scale
+             renderQuestions('ghq12-questions', ghq12Questions, ghq12Labels, '0-3', ghq12ReverseScored); // 0-3 scale, with reverse scoring
+             renderQuestions('dass21-questions', dass21Questions, dass21Labels, '0-3'); // 0-3 scale
+
+            loadResults(); // Load any previously saved results on page load
+            // Initial tab is set by CSS and the openTab call below
+
+            // Open the default tab (PERMA) on load
+            document.querySelector('.tabs .tab-button').click();
+        });
+
+
+    </script>
+</body>
+</html>
