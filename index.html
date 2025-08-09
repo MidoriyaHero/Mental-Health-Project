@@ -970,7 +970,7 @@
             };
 
             // 🔗 Gửi 1 lần cho 4 sheet qua Apps Script Web App
-            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwE035XhAtdxX7t2t6q4KohhpG3590ECbiPJh8BxPD8XWTr6X1-FaXwJ9glTKpARB1FvQ/exec';
+            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwXvh3wUdpFU_ntZoSXfK4mWt0kAZqYnJxMvTZPRJluesvW_KFMVPb--U2E82W3MeKGBw/exec';
             const ok = await sendToAppsScript(
                 WEB_APP_URL,
                 {
@@ -979,7 +979,7 @@
                 'GHQ-12': ghqRow,
                 'DASS-21': dassRow
                 },
-                headers
+                headers,  { devReadable: true } 
                 );
 
             if (!ok) {
