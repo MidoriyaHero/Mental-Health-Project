@@ -249,7 +249,7 @@
         margin-top: 15px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1000px) {
         .tabs {
             flex-direction: column;
         }
@@ -297,6 +297,19 @@
             font-size: 0.9em;
             padding: 8px 10px;
         }
+    }
+
+    /* Tab bị khóa */
+    .tab-button.locked {
+    opacity: .45;
+    pointer-events: none;   /* chặn chuột */
+    cursor: not-allowed;
+    }
+
+    /* (tuỳ chọn) thêm biểu tượng ổ khoá */
+    .tab-button.locked::after {
+    content: " 🔒";
+    font-size: 0.9em;
     }
 
     #perma-chart-container {
@@ -395,6 +408,105 @@
     .nav-arrow.primary { background: var(--primary-color); color: #fff; }
     .nav-label { font-weight: 600; }
 
+    /* --- Demographics polish pack --- */
+    .form-card {
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.04);
+    }
+
+    #demographics h2 {
+    margin: 0 0 14px;
+    font-weight: 700;
+    color: #2b6cb0; /* xanh nhẹ đồng bộ tab */
+    }
+
+    .q {
+    margin: 14px 0 18px;
+    }
+    .q > label,
+    .q .q-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    }
+    .q small.help {
+    display: block;
+    color: #6b7280;
+    margin-top: 6px;
+    }
+
+    /* input + select thống nhất */
+    #demographics input[type="text"],
+    #demographics select {
+    width: 100%;
+    padding: 10px 12px;
+    border: 1px solid #d7dbe5;
+    border-radius: 10px;
+    background: #fff;
+    outline: none;
+    transition: box-shadow .2s, border-color .2s;
+    }
+    #demographics input[type="text"]:focus,
+    #demographics select:focus {
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 4px rgba(74,144,226,.12);
+    }
+
+    /* radio nhóm thành hàng “chip” */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips input[type="radio"] { display: none; }
+    .chips label {
+    display: inline-block;
+    padding: 8px 12px;
+    border: 1px solid #d7dbe5;
+    border-radius: 999px;
+    cursor: pointer;
+    user-select: none;
+    transition: all .15s;
+    background: #f7fafc;
+    }
+    .chips input[type="radio"]:checked + label {
+    border-color: var(--primary-color);
+    background: rgba(74,144,226,.12);
+    color: #1e3a8a;
+    }
+
+    /* 2 cột trên màn hình rộng */
+    @media (min-width: 900px) {
+    #demographics .grid-2 {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 16px 24px;
+    }
+    #demographics .grid-2 .full { grid-column: 1 / -1; }
+    }
+
+    /* thanh hành động */
+    .action-bar {
+    margin-top: 10px;
+    padding-top: 12px;
+    border-top: 1px dashed #e2e8f0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    }
+    .action-bar .muted { color: #6b7280; font-size: .95em; }
+
+    /* Consent styles */
+    .consent-text { 
+    max-height: 700px; overflow-y: auto; 
+    padding-right: 8px; line-height: 1.6;
+    }
+    .consent-text h3 { margin: 12px 0 6px; color: #334155; }
+    .consent-check {
+    margin-top: 14px; padding: 10px 12px;
+    background: #fefce8; border: 1px solid #facc15; border-radius: 10px;
+    }
+    #btn-consent-next[disabled] { opacity: .6; cursor: not-allowed; }
+
 </style>
 </head>
 <body>
@@ -416,10 +528,201 @@
     </div>
 
     <div class="tabs">
+        <button class="tab-button active" onclick="openTab(event, 'consent')">Thông tin & Đồng thuận</button>
+        <button class="tab-button" onclick="openTab(event, 'demographics')">Demographics Information</button>
         <button class="tab-button active" onclick="openTab(event, 'perma')">PERMA Profiler</button>
         <button class="tab-button" onclick="openTab(event, 'ghq12')">GHQ-12</button>
         <button class="tab-button" onclick="openTab(event, 'dass21')">DASS-21</button>
         <button class="tab-button" onclick="openTab(event, 'results')">Kết quả</button>
+    </div>
+    <!-- START INFORM TABS -->
+    <div id="consent" class="tab-content active">
+        <div class="form-card">
+            <h2>Thông tin nghiên cứu & Đồng thuận tham gia</h2>
+
+            <div class="consent-text">
+            <p><strong>Xin chào anh/chị,</strong></p>
+            <p>Nhóm nghiên cứu xin cảm ơn anh/chị vì đã dành thời gian tìm hiểu về nghiên cứu mà chúng tôi đang thực hiện.</p>
+
+            <h3>1) Tên đề tài nghiên cứu</h3>
+            <p><strong>TÍNH ỨNG DỤNG CỦA MÔ HÌNH DUAL CONTINUA TRONG CHĂM SÓC SỨC KHỎE TINH THẦN NGƯỜI VIỆT NAM</strong></p>
+
+            <h3>2) Thông tin liên lạc</h3>
+            <p><strong>Nghiên cứu viên chính:</strong><br>
+            ThS.BS. Nguyễn Trung Nghĩa – Phó Giám đốc Trung tâm Chăm sóc Sức khỏe Tinh thần<br>
+            ThS. NTL. Phạm Hoài Thu – Thạc sĩ Tâm lý nguồn, Trung tâm Chăm sóc Sức khỏe Tinh thần</p>
+            <p><strong>Địa chỉ:</strong> Trung tâm Chăm sóc Sức khỏe Tinh thần – BV ĐKQT Vinmec Times City, 458 Minh Khai, Vĩnh Tuy, Hai Bà Trưng, Hà Nội<br>
+            <strong>Email:</strong> phamhoaithu810@gmail.com</p>
+
+            <h3>3) Đối tượng nghiên cứu</h3>
+            <p>Người Việt Nam từ 18 tuổi trở lên, không phân biệt giới tính, nghề nghiệp hay nơi cư trú.</p>
+
+            <h3>4) Mục đích nghiên cứu</h3>
+            <ul>
+                <li>Chuẩn hóa các công cụ tâm lý dành riêng cho người Việt Nam để đánh giá hạnh phúc và khó khăn về sức khỏe tinh thần.</li>
+                <li>Minh chứng tính ứng dụng của mô hình <em>Dual Continua</em> trong chăm sóc sức khỏe tinh thần người Việt.</li>
+            </ul>
+
+            <h3>5) Quy trình tham gia</h3>
+            <p>Anh/chị sẽ hoàn thành 3 bộ câu hỏi (tổng 66 câu): DASS-21, GHQ-12 và PERMA Profiler.</p>
+
+            <h3>6) Lợi ích</h3>
+            <ul>
+                <li><strong>Cá nhân:</strong> Nhận báo cáo tóm tắt chỉ báo sức khỏe tinh thần sau khi gửi bài.</li>
+                <li><strong>Cộng đồng:</strong> Dữ liệu giúp chuẩn hóa thang đo và phát triển chương trình hỗ trợ tâm lý cho người Việt.</li>
+            </ul>
+
+            <h3>7) Rủi ro</h3>
+            <p>Tham gia hoàn toàn tự nguyện. Một số câu hỏi có thể gây khó chịu; anh/chị có thể dừng bất cứ lúc nào mà không có hậu quả.</p>
+
+            <h3>8) Bảo mật & quyền riêng tư</h3>
+            <ul>
+                <li>Nghiên cứu không thu thập thông tin định danh cụ thể.</li>
+                <li>Dữ liệu chỉ do trưởng nhóm nghiên cứu và người được ủy quyền bằng văn bản truy cập, phục vụ phân tích và báo cáo khoa học.</li>
+            </ul>
+
+            <h3>9) Đồng thuận</h3>
+            <p>Bằng cách đánh dấu “Tôi đồng ý” và tiếp tục, tôi xác nhận đã đọc, hiểu và tự nguyện tham gia; tôi có thể rút lui bất cứ lúc nào.</p>
+            </div>
+
+            <div class="consent-check">
+            <label>
+                <input type="checkbox" id="consent-agree">
+                Tôi đã đọc và <strong>đồng ý</strong> tham gia nghiên cứu này.
+            </label>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- START DEMOGRAPHICS TABS -->
+
+    <div id="consent" class="tab-content active">
+        <div class="form-card">
+            <h2>Thông tin nghiên cứu & Đồng thuận tham gia</h2>
+            <div class="consent-text">
+            <p><strong>Xin chào anh/chị,</strong></p>
+            <p>Nhóm nghiên cứu xin cảm ơn anh/chị vì đã dành thời gian tìm hiểu về nghiên cứu mà chúng tôi đang thực hiện...</p>
+            <!-- ở đây copy nguyên văn nội dung bạn đã gửi, chia nhỏ thành <p> hoặc <ul> cho dễ đọc -->
+            </div>
+
+            <div class="consent-check">
+            <label>
+                <input type="checkbox" id="consent-agree">
+                Tôi đã đọc và đồng ý tham gia nghiên cứu này.
+            </label>
+            </div>
+
+            <div class="action-bar">
+            <button class="nav-arrow primary" id="btn-consent-next">Tiếp tục ▶︎</button>
+            </div>
+        </div>
+    </div>
+    <!-- --- DEMOGRAPHICS TABS --- --> 
+    <div id="demographics" class="tab-content">
+        <div class="form-card">
+            <h2>Thông tin nhân khẩu học</h2>
+
+            <div class="grid-2">
+            <!-- 1) Năm sinh -->
+            <div class="q">
+                <label for="demo-yob">1) Năm sinh của bạn:</label>
+                <input type="text" id="demo-yob" placeholder="VD: 1995" inputmode="numeric">
+            </div>
+
+            <!-- 2) Giới tính -->
+            <div class="q">
+                <div class="q-label">2) Giới tính của bạn:</div>
+                <div class="chips">
+                <input id="g1" type="radio" name="demo-gender" value="Nam"><label for="g1">Nam</label>
+                <input id="g2" type="radio" name="demo-gender" value="Nữ"><label for="g2">Nữ</label>
+                <input id="g3" type="radio" name="demo-gender" value="Khác"><label for="g3">Khác</label>
+                </div>
+                <input type="text" id="demo-gender-other" placeholder="Ghi rõ (nếu chọn Khác)" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 3) Học vấn -->
+            <div class="q">
+                <label for="demo-edu">3) Trình độ học vấn cao nhất:</label>
+                <select id="demo-edu">
+                <option value="">-- Chọn --</option>
+                <option>Tiểu học</option><option>Trung học cơ sở</option>
+                <option>Trung học phổ thông</option><option>Đại học</option>
+                <option>Sau đại học – Thạc sĩ hoặc tương đương</option>
+                <option>Sau đại học – Tiến sĩ</option>
+                </select>
+            </div>
+
+            <!-- 4) Việc làm -->
+            <div class="q">
+                <label for="demo-employ">4) Tình trạng việc làm hiện tại:</label>
+                <select id="demo-employ">
+                <option value="">-- Chọn --</option>
+                <option>Đang làm việc</option><option>Thất nghiệp</option>
+                <option>Sinh viên</option><option>Đã nghỉ hưu</option>
+                </select>
+            </div>
+
+            <!-- 5) Hôn nhân -->
+            <div class="q">
+                <label for="demo-marital">5) Tình trạng hôn nhân:</label>
+                <select id="demo-marital">
+                <option value="">-- Chọn --</option>
+                <option>Độc thân</option><option>Đã kết hôn</option>
+                <option>Đã ly hôn</option><option>Góa</option>
+                </select>
+            </div>
+
+            <!-- 6) Thu nhập -->
+            <div class="q full">
+                <div class="q-label">6) Hãy chọn mô tả phù hợp với bạn:</div>
+                <div class="chips">
+                <input id="i1" type="radio" name="demo-income" value="Không đủ"><label for="i1">Không đủ nhu cầu</label>
+                <input id="i2" type="radio" name="demo-income" value="Đủ"><label for="i2">Đủ nhu cầu</label>
+                <input id="i3" type="radio" name="demo-income" value="Nhiều hơn"><label for="i3">Nhiều hơn nhu cầu</label>
+                </div>
+            </div>
+
+            <!-- 7) Khu vực sống -->
+            <div class="q">
+                <div class="q-label">7) Bạn đang sống ở:</div>
+                <div class="chips">
+                <input id="a1" type="radio" name="demo-area" value="Thành thị"><label for="a1">Thành thị</label>
+                <input id="a2" type="radio" name="demo-area" value="Nông thôn"><label for="a2">Nông thôn</label>
+                </div>
+            </div>
+
+            <!-- 8) Tôn giáo -->
+            <div class="q">
+                <div class="q-label">8) Bạn có theo tôn giáo nào không?</div>
+                <div class="chips">
+                <input id="r0" type="radio" name="demo-religion" value="Không"><label for="r0">Không</label>
+                <input id="r1" type="radio" name="demo-religion" value="Có"><label for="r1">Có</label>
+                </div>
+                <input type="text" id="demo-religion-detail" placeholder="Vui lòng ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 9) Thể chất -->
+            <div class="q">
+                <div class="q-label">9) Bạn có đang gặp vấn đề sức khỏe thể chất?</div>
+                <div class="chips">
+                <input id="p0" type="radio" name="demo-physical" value="Không"><label for="p0">Không</label>
+                <input id="p1" type="radio" name="demo-physical" value="Có"><label for="p1">Có</label>
+                </div>
+                <input type="text" id="demo-physical-detail" placeholder="Ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 10) Tâm thần -->
+            <div class="q">
+                <div class="q-label">10) Bạn đã từng được chẩn đoán/điều trị rối loạn sức khỏe tâm thần?</div>
+                <div class="chips">
+                <input id="s0" type="radio" name="demo-psych" value="Không"><label for="s0">Không</label>
+                <input id="s1" type="radio" name="demo-psych" value="Có"><label for="s1">Có</label>
+                </div>
+                <input type="text" id="demo-psych-detail" placeholder="Ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+            </div>
+        </div>
     </div>
 
     <div id="perma" class="tab-content active">
@@ -489,78 +792,6 @@
     <!-- START JAVASCRIPT -->
 
     <script type="text/javascript">
-    // --- Google Sheets API Integration (OAuth2, API Key, gapi, gis) ---
-    // TODO: Replace with your actual values
-    const CLIENT_ID = ''; 
-    const API_KEY = '';  
-    const SHEET_ID = '';
-    const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
-    const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
-
-    let tokenClient;
-    let gapiInited = false;
-    let gisInited = false;
-
-    document.getElementById('authorize_button').style.display = 'none';
-    document.getElementById('signout_button').style.display = 'none';
-
-    function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
-    }
-
-    async function initializeGapiClient() {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [DISCOVERY_DOC],
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-    }
-
-    function gisLoaded() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: '', // defined later
-        });
-        gisInited = true;
-        maybeEnableButtons();
-    }
-
-    function maybeEnableButtons() {
-        if (gapiInited && gisInited) {
-            document.getElementById('authorize_button').style.display = 'inline-block';
-        }
-    }
-
-    function handleAuthClick() {
-        tokenClient.callback = async (resp) => {
-            if (resp.error !== undefined) {
-                alert('Google Auth error: ' + resp.error);
-                throw (resp);
-            }
-            document.getElementById('signout_button').style.display = 'inline-block';
-            document.getElementById('authorize_button').innerText = 'Refresh';
-            document.getElementById('google-auth-status').textContent = 'Đã đăng nhập Google.';
-        };
-
-        if (gapi.client.getToken() === null) {
-            tokenClient.requestAccessToken({prompt: 'consent'});
-        } else {
-            tokenClient.requestAccessToken({prompt: ''});
-        }
-    }
-
-    function handleSignoutClick() {
-        const token = gapi.client.getToken();
-        if (token !== null) {
-            google.accounts.oauth2.revoke(token.access_token);
-            gapi.client.setToken('');
-            document.getElementById('google-auth-status').textContent = 'Đã đăng xuất.';
-            document.getElementById('authorize_button').innerText = 'Đăng nhập Google để lưu kết quả';
-            document.getElementById('signout_button').style.display = 'none';
-        }
-    }   
     async function sendToAppsScript(webAppUrl, rows, headers, opts = {}) {
         const { devReadable = false } = opts;
         const payload = JSON.stringify({ rows, headers, t: Date.now() });
@@ -761,6 +992,16 @@
 
         let permaChart = null; 
         let allResults = {}; 
+        
+        function goToDemographics() {
+            const agree = document.getElementById('consent-agree');
+            if (!agree.checked) {
+                alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
+                return; // dừng luôn, không chuyển tab
+            }
+            openTab(null, 'demographics'); // gọi hàm mở tab demographics (bạn đã có sẵn)
+        }
+
         // ====== HELPERS ======
 
         function openTab(evt, tabName) {
@@ -866,7 +1107,7 @@
                 displayAllResults(results);
             } else {
                 const resultsContentDiv = document.getElementById('results-content');
-                resultsContentDiv.innerHTML = '<p class="completion-message">Chưa có kết quả nào được lưu. Vui lòng hoàn thành các bài test và bấm "Tính điểm & Xem kết quả".</p>';
+                resultsContentDiv.innerHTML  = '<p class="completion-message">Chưa có kết quả nào được lưu. Vui lòng hoàn thành các bài test và bấm "Tính điểm & Xem kết quả".</p>';
                 document.getElementById('perma-chart-container').style.display = 'none';
                 if (permaChart) {
                     permaChart.destroy();
@@ -875,12 +1116,136 @@
             }
         }
         
+        // --- Demographic Logic ---
+        const DEMO_KEY = 'mh_demographics_v2';
+        function valRadio(name) {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : '';
+        }
+
+        function showOnChecked(radioId, inputId) {
+            const r = document.getElementById(radioId);
+            const t = document.getElementById(inputId);
+            if (!r || !t) return;
+            r.addEventListener('change', () => { t.style.display = r.checked ? 'inline-block' : 'none'; if (!r.checked) t.value = ''; });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hiện/ẩn ô chi tiết
+            const genderOtherRadio = document.getElementById('demo-gender-other-radio');
+            const genderOtherInput = document.getElementById('demo-gender-other');
+            if (genderOtherRadio && genderOtherInput) {
+            document.querySelectorAll('input[name="demo-gender"]').forEach(el => {
+                el.addEventListener('change', () => {
+                const isOther = genderOtherRadio.checked;
+                genderOtherInput.style.display = isOther ? 'inline-block' : 'none';
+                if (!isOther) genderOtherInput.value = '';
+                });
+            });
+            }
+            showOnChecked('demo-rel-yes', 'demo-religion-detail');
+            showOnChecked('demo-phy-yes', 'demo-physical-detail');
+            showOnChecked('demo-psy-yes', 'demo-psych-detail');
+
+            // Nút Lưu & Next
+            const btn = document.getElementById('demo-save-next');
+            if (btn) {
+            btn.addEventListener('click', () => {
+                // Thu thập
+                const yob = (document.getElementById('demo-yob')?.value || '').trim();
+                let gender = valRadio('demo-gender');
+                if (gender === 'Khác') gender = (document.getElementById('demo-gender-other')?.value || 'Khác').trim();
+
+                const edu    = document.getElementById('demo-edu')?.value || '';
+                const employ = document.getElementById('demo-employ')?.value || '';
+                const marital= document.getElementById('demo-marital')?.value || '';
+                const income = valRadio('demo-income');
+                const area   = valRadio('demo-area');
+
+                const religion = valRadio('demo-religion');
+                const religion_detail = religion === 'Có' ? (document.getElementById('demo-religion-detail')?.value || '').trim() : '';
+
+                const physical = valRadio('demo-physical');
+                const physical_detail = physical === 'Có' ? (document.getElementById('demo-physical-detail')?.value || '').trim() : '';
+
+                const psych = valRadio('demo-psych');
+                const psych_detail = psych === 'Có' ? (document.getElementById('demo-psych-detail')?.value || '').trim() : '';
+
+                // Validate nhẹ Năm sinh
+                if (yob && !/^\d{4}$/.test(yob)) { alert('Năm sinh phải là 4 chữ số (vd 1995).'); return; }
+                const y = parseInt(yob, 10);
+                if (yob && (y < 1900 || y > new Date().getFullYear())) { alert('Năm sinh không hợp lệ.'); return; }
+
+                const demo = {
+                yob, gender, edu, employ, marital, income, area,
+                religion, religion_detail,
+                physical, physical_detail,
+                psych, psych_detail,
+                saved_at: new Date().toISOString()
+                };
+                localStorage.setItem(DEMO_KEY, JSON.stringify(demo));
+                goToTab('perma');
+            });
+            }
+
+            // Tự động nạp lại nếu có lưu trước đó
+            try {
+            const saved = JSON.parse(localStorage.getItem(DEMO_KEY) || '{}');
+            if (saved && Object.keys(saved).length) {
+                document.getElementById('demo-yob') && (document.getElementById('demo-yob').value = saved.yob || '');
+
+                if (saved.gender) {
+                const g = Array.from(document.querySelectorAll('input[name="demo-gender"]'))
+                    .find(x => x.value.toLowerCase() === saved.gender.toLowerCase());
+                if (g) g.checked = true;
+                else {
+                    document.getElementById('demo-gender-other-radio').checked = true;
+                    const ip = document.getElementById('demo-gender-other');
+                    ip.style.display = 'inline-block'; ip.value = saved.gender;
+                }
+                }
+                document.getElementById('demo-edu') && (document.getElementById('demo-edu').value = saved.edu || '');
+                document.getElementById('demo-employ') && (document.getElementById('demo-employ').value = saved.employ || '');
+                document.getElementById('demo-marital') && (document.getElementById('demo-marital').value = saved.marital || '');
+
+                if (saved.income) {
+                const el = document.querySelector(`input[name="demo-income"][value="${saved.income}"]`); el && (el.checked = true);
+                }
+                if (saved.area) {
+                const el = document.querySelector(`input[name="demo-area"][value="${saved.area}"]`); el && (el.checked = true);
+                }
+
+                if (saved.religion) {
+                const el = document.querySelector(`input[name="demo-religion"][value="${saved.religion}"]`); el && (el.checked = true);
+                if (saved.religion === 'Có') {
+                    const ip = document.getElementById('demo-religion-detail'); ip.style.display = 'inline-block'; ip.value = saved.religion_detail || '';
+                }
+                }
+                if (saved.physical) {
+                const el = document.querySelector(`input[name="demo-physical"][value="${saved.physical}"]`); el && (el.checked = true);
+                if (saved.physical === 'Có') {
+                    const ip = document.getElementById('demo-physical-detail'); ip.style.display = 'inline-block'; ip.value = saved.physical_detail || '';
+                }
+                }
+                if (saved.psych) {
+                const el = document.querySelector(`input[name="demo-psych"][value="${saved.psych}"]`); el && (el.checked = true);
+                if (saved.psych === 'Có') {
+                    const ip = document.getElementById('demo-psych-detail'); ip.style.display = 'inline-block'; ip.value = saved.psych_detail || '';
+                }
+                }
+            }
+            } catch(_) {}
+        });
+
+
         async function calculateAllScores() {
             const resultsContentDiv = document.getElementById('results-content');
             resultsContentDiv.innerHTML = '';
 
             // 🔒 BẮT BUỘC LÀM ĐỦ 3 BÀI (100% câu)
             const missing = [];
+
+            const demo = JSON.parse(localStorage.getItem('mh_demographics_v2') || '{}');
 
             // PERMA: 15 câu
             for (let i = 0; i < permaQuestions.length; i++) {
@@ -943,6 +1308,22 @@
             const permaRow = [ name, date, timeStr, ...permaAnswers ];
             const ghqRow   = [ name, date, timeStr, ...ghqAnswers ];
             const dassRow  = [ name, date, timeStr, ...dassAnswers ];
+            const demoFront = [
+                demo.yob || '',
+                demo.gender || '',
+                demo.edu || '',
+                demo.employ || '',
+                demo.marital || '',
+                demo.income || '',
+                demo.area || '',
+                demo.religion || '',
+                demo.religion === 'Có' ? (demo.religion_detail || '') : '',
+                demo.physical || '',
+                demo.physical === 'Có' ? (demo.physical_detail || '') : '',
+                demo.psych || '',
+                demo.psych === 'Có' ? (demo.psych_detail || '') : ''
+                ];
+            const commonFront = [ name, date, timeStr, ...demoFront ];
 
             // "Tổng hợp"
             const summaryRow = [
@@ -969,6 +1350,14 @@
                 'DASS-21':        ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
             };
 
+            const DEMO_HEADER = [
+            'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
+            'Thu nhập đủ nhu cầu','Khu vực sống',
+            'Tôn giáo (Có/Không)','Tôn giáo - chi tiết',
+            'Vấn đề thể chất (Có/Không)','Thể chất - chi tiết',
+            'Tiền sử/điều trị tâm thần (Có/Không)','Tâm thần - chi tiết'
+            ];
+
             // 🔗 Gửi 1 lần cho 4 sheet qua Apps Script Web App
             const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwXvh3wUdpFU_ntZoSXfK4mWt0kAZqYnJxMvTZPRJluesvW_KFMVPb--U2E82W3MeKGBw/exec';
             const ok = await sendToAppsScript(
@@ -977,7 +1366,8 @@
                 'Tong hop': summaryRow,
                 'PERMA-Profiler': permaRow,
                 'GHQ-12': ghqRow,
-                'DASS-21': dassRow
+                'DASS-21': dassRow,
+                'Demographics': commonFront,
                 },
                 headers,  { devReadable: true } 
                 );
@@ -1336,10 +1726,16 @@
         }
 
         function mountTabNav() {
-        const order = ['perma','ghq12','dass21','results'];
-        const nice  = { perma:'PERMA', ghq12:'GHQ-12', dass21:'DASS-21', results:'Kết quả' };
-
-        order.forEach((tabId, idx) => {
+            const order = ['consent','demographics', 'perma', 'ghq12', 'dass21', 'results'];
+            const nice  = {
+                consent: "Thông tin & Đồng thuận",
+                demographics: 'Nhân khẩu học',
+                perma: 'PERMA',
+                ghq12: 'GHQ-12',
+                dass21: 'DASS-21',
+                results: 'Kết quả'
+                };            
+            order.forEach((tabId, idx) => {
             const tabEl = document.getElementById(tabId);
             if (!tabEl) return;
             if (tabEl.querySelector('.tab-nav')) return;
@@ -1350,19 +1746,19 @@
             const bar = document.createElement('div');
             bar.className = 'tab-nav';
             bar.innerHTML = `
-            <button class="nav-arrow" ${!prevId ? 'disabled' : ''}>
-                ◀︎ <span class="nav-label">${prevId ? nice[prevId] : ''}</span>
-            </button>
-            <button class="nav-arrow ${nextId ? 'primary' : ''}" ${!nextId ? 'disabled' : ''}>
-                <span class="nav-label">${nextId ? nice[nextId] : ''}</span> ▶︎
-            </button>
-            `;
+                <button class="nav-arrow" ${!prevId ? 'disabled' : ''}>
+                    ◀︎ <span class="nav-label">${prevId ? nice[prevId] : ''}</span>
+                </button>
+                <button class="nav-arrow ${nextId ? 'primary' : ''}" ${!nextId ? 'disabled' : ''}>
+                    <span class="nav-label">${nextId ? nice[nextId] : ''}</span> ▶︎
+                </button>
+                `;
             tabEl.appendChild(bar);
 
             const [prevBtn, nextBtn] = bar.querySelectorAll('.nav-arrow');
             if (prevId) prevBtn.addEventListener('click', () => goToTab(prevId));
             if (nextId) nextBtn.addEventListener('click', () => goToTab(nextId));
-        });
+            });
         }
         document.addEventListener('DOMContentLoaded', mountTabNav);
         
@@ -1408,7 +1804,4 @@
             document.querySelector('.tabs .tab-button').click();
         });
     </script>
-    <!-- <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script> -->
 </body>
-</html>
