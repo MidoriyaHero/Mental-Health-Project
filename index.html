@@ -433,80 +433,85 @@
     margin-bottom: 8px;
     }
     .q small.help {
-    display: block;
-    color: #6b7280;
-    margin-top: 6px;
+        display: block;
+        color: #6b7280;
+        margin-top: 6px;
     }
 
     /* input + select thống nhất */
     #demographics input[type="text"],
     #demographics select {
-    width: 100%;
-    padding: 10px 12px;
-    border: 1px solid #d7dbe5;
-    border-radius: 10px;
-    background: #fff;
-    outline: none;
-    transition: box-shadow .2s, border-color .2s;
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d7dbe5;
+        border-radius: 10px;
+        background: #fff;
+        outline: none;
+        transition: box-shadow .2s, border-color .2s;
     }
     #demographics input[type="text"]:focus,
     #demographics select:focus {
-    border-color: #4a90e2;
-    box-shadow: 0 0 0 4px rgba(74,144,226,.12);
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 4px rgba(74,144,226,.12);
     }
 
     /* radio nhóm thành hàng “chip” */
     .chips { display: flex; flex-wrap: wrap; gap: 8px; }
     .chips input[type="radio"] { display: none; }
     .chips label {
-    display: inline-block;
-    padding: 8px 12px;
-    border: 1px solid #d7dbe5;
-    border-radius: 999px;
-    cursor: pointer;
-    user-select: none;
-    transition: all .15s;
-    background: #f7fafc;
+        display: inline-block;
+        padding: 8px 12px;
+        border: 1px solid #d7dbe5;
+        border-radius: 999px;
+        cursor: pointer;
+        user-select: none;
+        transition: all .15s;
+        background: #f7fafc;
     }
     .chips input[type="radio"]:checked + label {
-    border-color: var(--primary-color);
-    background: rgba(74,144,226,.12);
-    color: #1e3a8a;
+        border-color: var(--primary-color);
+        background: rgba(74,144,226,.12);
+        color: #1e3a8a;
     }
 
     /* 2 cột trên màn hình rộng */
     @media (min-width: 900px) {
-    #demographics .grid-2 {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 16px 24px;
-    }
-    #demographics .grid-2 .full { grid-column: 1 / -1; }
+        #demographics .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+        }
+        #demographics .grid-2 .full { grid-column: 1 / -1; }
     }
 
     /* thanh hành động */
     .action-bar {
-    margin-top: 10px;
-    padding-top: 12px;
-    border-top: 1px dashed #e2e8f0;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+        margin-top: 10px;
+        padding-top: 12px;
+        border-top: 1px dashed #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
     }
     .action-bar .muted { color: #6b7280; font-size: .95em; }
 
     /* Consent styles */
     .consent-text { 
-    max-height: 700px; overflow-y: auto; 
-    padding-right: 8px; line-height: 1.6;
+        max-height: 700px; overflow-y: auto; 
+        padding-right: 8px; line-height: 1.6;
     }
     .consent-text h3 { margin: 12px 0 6px; color: #334155; }
     .consent-check {
-    margin-top: 14px; padding: 10px 12px;
-    background: #fefce8; border: 1px solid #facc15; border-radius: 10px;
+        margin-top: 14px; padding: 10px 12px;
+        background: #fefce8; border: 1px solid #facc15; border-radius: 10px;
     }
     #btn-consent-next[disabled] { opacity: .6; cursor: not-allowed; }
-
+    
+    .tab-button.locked {
+        opacity: .45;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
 </style>
 </head>
 <body>
@@ -790,58 +795,55 @@
 
 
     <!-- START JAVASCRIPT -->
-
     <script type="text/javascript">
     async function sendToAppsScript(webAppUrl, rows, headers, opts = {}) {
         const { devReadable = false } = opts;
         const payload = JSON.stringify({ rows, headers, t: Date.now() });
-        // 1) Nếu tab sắp ẩn/đóng, ưu tiên sendBeacon (ổn định khi rời trang)
+
         if (navigator.sendBeacon && document.visibilityState === 'hidden') {
             try {
-            const ok = navigator.sendBeacon(
+            const beaconOk = navigator.sendBeacon(
                 webAppUrl,
                 new Blob([payload], { type: 'text/plain;charset=utf-8' })
             );
-            return ok; // true/false
+            return beaconOk; // true/false
             } catch (e) {
             console.warn('sendBeacon failed, fallback to fetch no-cors', e);
-            // rơi xuống fetch no-cors
             }
         }
-        // 2) (Tùy chọn DEV) thử gửi kiểu đọc được phản hồi
+
         if (devReadable) {
             try {
             const resp = await fetch(webAppUrl, {
                 method: 'POST',
-                headers: { 'Content-Type': 'application/json' }, // sẽ tạo preflight
+                headers: { 'Content-Type': 'application/json' },
                 body: payload,
             });
-            // Nếu server không set CORS hợp lệ, khối này ném lỗi -> fallback ở dưới
             const json = await resp.json();
             return !!json.ok;
             } catch (e) {
             console.warn('Readable fetch failed (likely CORS). Falling back to no-cors.', e);
             }
         }
-        // 3) Gửi an toàn lâu dài: no-cors + text/plain (fire-and-forget)
+
         try {
             await fetch(webAppUrl, {
             method: 'POST',
-            mode: 'no-cors', // tránh preflight -> không bị CORS chặn
+            mode: 'no-cors',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
             body: payload,
-            keepalive: true, // cố gửi dù trang đang đóng
+            keepalive: true,
             });
-            // Không đọc được phản hồi trong no-cors -> coi như OK
-            return true;
+            return true; // no-cors: luôn coi như gửi OK
         } catch (e) {
             console.error('Apps Script error:', e);
             return false;
         }
         }
 
-    document.getElementById('authorize_button').onclick = handleAuthClick;
-    document.getElementById('signout_button').onclick = handleSignoutClick;
+
+    // document.getElementById('authorize_button').onclick = handleAuthClick;
+    // document.getElementById('signout_button').onclick = handleSignoutClick;
 
     // --- Append results to Google Sheet ---
     async function appendResultsToSheet(rowData) {
@@ -992,37 +994,97 @@
 
         let permaChart = null; 
         let allResults = {}; 
-        
+
+        // ===== CONSENT LOCK =====
+        function getTabIdFromButton(btn){
+            // lấy id tab từ onclick='openTab(event, "xxx")' hoặc data-tab
+            const m = btn.getAttribute('onclick')?.match(/'([^']+)'/);
+            return (m && m[1]) || btn.dataset.tab || '';
+        }
+
+        // áp trạng thái khoá cho các tab ở thanh trên
+        function applyConsentLock() {
+            const agreed = !!document.getElementById('consent-agree')?.checked;
+            document.querySelectorAll('.tabs .tab-button').forEach(btn => {
+                    const tabId = getTabIdFromButton(btn);
+                    if (tabId && tabId !== 'consent') {
+                    btn.classList.toggle('locked', !agreed);
+                    }
+                });
+        }
+
+        // bọc openTab để CHẶN chuyển tab nếu chưa đồng ý
+        (function wrapOpenTab(){
+            const _openTab = window.openTab;
+            window.openTab = function(evt, tabName){
+                if (tabName !== 'consent') {
+                const agreed = !!document.getElementById('consent-agree')?.checked;
+                if (!agreed) {
+                    alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
+                    return;
+                }
+                }
+                _openTab(evt, tabName);
+            };
+        })();
+
+        // khi trang tải xong: khoá tab + gắn listener cho checkbox
+        document.addEventListener('DOMContentLoaded', () => {
+        // lần đầu khoá hết trừ consent
+        applyConsentLock();
+
+        // đổi trạng thái khoá khi tick/untick
+        const cb = document.getElementById('consent-agree');
+        if (cb) cb.addEventListener('change', applyConsentLock);
+        });
+
         function goToDemographics() {
-            const agree = document.getElementById('consent-agree');
-            if (!agree.checked) {
-                alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
-                return; // dừng luôn, không chuyển tab
-            }
-            openTab(null, 'demographics'); // gọi hàm mở tab demographics (bạn đã có sẵn)
+        const agree = document.getElementById('consent-agree');
+        if (!agree || !agree.checked) {
+            alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
+            return;
+        }
+        // đã đồng ý => mở khoá tab và đi tiếp
+        applyConsentLock();
+        goToTab('demographics'); // dùng click nút tab có sẵn
         }
 
         // ====== HELPERS ======
 
+        // function openTab(evt, tabName) {
+        //     document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+        //     document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+        //     document.getElementById(tabName).classList.add('active');
+        //     evt.currentTarget.classList.add('active');
+
+        //     if (tabName === 'results') {
+        //         // Đừng load localStorage ở đây nữa
+        //         const resultsDiv = document.getElementById('results-content');
+        //         resultsDiv.innerHTML = '<p class="completion-message">Nhấn "Tính điểm & Xem kết quả" để xem kết quả từ hệ thống.</p>';
+        //         document.getElementById('perma-chart-container').style.display = 'none';
+        //         if (permaChart) { permaChart.destroy(); permaChart = null; }
+        //     } else {
+        //         document.getElementById('perma-chart-container').style.display = 'none';
+        //         if (permaChart) { permaChart.destroy(); permaChart = null; }
+        //     }
+        // }
         function openTab(evt, tabName) {
-        document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
-        document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
-        document.getElementById(tabName).classList.add('active');
-        evt.currentTarget.classList.add('active');
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
 
-        if (tabName === 'results') {
-            // Đừng load localStorage ở đây nữa
-            const resultsDiv = document.getElementById('results-content');
-            resultsDiv.innerHTML = '<p class="completion-message">Nhấn "Tính điểm & Xem kết quả" để xem kết quả từ hệ th.</p>';
-            document.getElementById('perma-chart-container').style.display = 'none';
-            if (permaChart) { permaChart.destroy(); permaChart = null; }
-        } else {
-            document.getElementById('perma-chart-container').style.display = 'none';
-            if (permaChart) { permaChart.destroy(); permaChart = null; }
+            const chartBox = document.getElementById('perma-chart-container');
+            if (tabName === 'results') {
+                const resultsDiv = document.getElementById('results-content');
+                resultsDiv.innerHTML = '<p class="completion-message">Nhấn "Tính điểm & Xem kết quả" để xem kết quả từ hệ thống.</p>';
+                if (chartBox) chartBox.style.display = 'none';
+                if (permaChart) { permaChart.destroy(); permaChart = null; }
+            } else {
+                if (chartBox) chartBox.style.display = 'none';
+                if (permaChart) { permaChart.destroy(); permaChart = null; }
+            }
         }
-        }
-
-
         function renderQuestions(containerId, questions, labels, scaleType = '0-10', reverseScored = []) {
             const container = document.getElementById(containerId);
             container.innerHTML = ''; 
@@ -1118,6 +1180,63 @@
         
         // --- Demographic Logic ---
         const DEMO_KEY = 'mh_demographics_v2';
+        function collectDemographicsFromDOM() {
+            const v = id => (document.getElementById(id)?.value || '').trim();
+            const valRadio = name => {
+                const el = document.querySelector(`input[name="${name}"]:checked`);
+                return el ? el.value : '';
+            };
+
+            const yob     = v('demo-yob');
+            let   gender  = valRadio('demo-gender');
+            if (gender === 'Khác') gender = v('demo-gender-other') || 'Khác';
+
+            const edu     = v('demo-edu');
+            const employ  = v('demo-employ');
+            const marital = v('demo-marital');
+            const income  = valRadio('demo-income');
+            const area    = valRadio('demo-area');
+
+            const religion = valRadio('demo-religion');
+            const religion_detail = religion === 'Có' ? v('demo-religion-detail') : '';
+
+            const physical = valRadio('demo-physical');
+            const physical_detail = physical === 'Có' ? v('demo-physical-detail') : '';
+
+            const psych = valRadio('demo-psych');
+            const psych_detail = psych === 'Có' ? v('demo-psych-detail') : '';
+
+            const demo = {
+                yob, gender, edu, employ, marital, income, area,
+                religion, religion_detail, physical, physical_detail, psych, psych_detail
+            };
+
+            // lưu cho lần sau (tuỳ chọn)
+            localStorage.setItem('mh_demographics_v2', JSON.stringify({...demo, saved_at:new Date().toISOString()}));
+
+            return demo;
+        }
+
+        function buildGeneralRow({ name, date, timeStr, perma, ghq12, dass21 }) {
+            const n2 = v =>
+                (typeof v === 'number' && isFinite(v)) ? +v.toFixed(2) : '';
+
+            const P = perma?.dimensionScores ? n2(perma.dimensionScores.P) : '';
+            const E = perma?.dimensionScores ? n2(perma.dimensionScores.E) : '';
+            const R = perma?.dimensionScores ? n2(perma.dimensionScores.R) : '';
+            const M = perma?.dimensionScores ? n2(perma.dimensionScores.M) : '';
+            const A = perma?.dimensionScores ? n2(perma.dimensionScores.A) : '';
+            const permaTotal = perma ? n2(perma.totalPermaAverage) : '';
+
+            const ghqTotal = (typeof ghq12?.totalScore === 'number') ? ghq12.totalScore : '';
+            const dDep    = (typeof dass21?.['Trầm cảm'] === 'number') ? dass21['Trầm cảm'] : '';
+            const dAnx    = (typeof dass21?.['Lo âu']   === 'number') ? dass21['Lo âu']   : '';
+            const dStress = (typeof dass21?.['Stress']  === 'number') ? dass21['Stress']  : '';
+
+            return [name||'', date||'', timeStr||'', P,E,R,M,A, permaTotal, ghqTotal, dDep, dAnx, dStress];
+        }
+
+
         function valRadio(name) {
             const el = document.querySelector(`input[name="${name}"]:checked`);
             return el ? el.value : '';
@@ -1245,7 +1364,6 @@
             // 🔒 BẮT BUỘC LÀM ĐỦ 3 BÀI (100% câu)
             const missing = [];
 
-            const demo = JSON.parse(localStorage.getItem('mh_demographics_v2') || '{}');
 
             // PERMA: 15 câu
             for (let i = 0; i < permaQuestions.length; i++) {
@@ -1269,7 +1387,7 @@
                 return; // ⛔ dừng hẳn
             }
 
-            // ✅ ĐỦ 3 BÀI → tính điểm
+            // ĐỦ 3 BÀI → tính điểm
             const name = document.getElementById('name').value || 'Người dùng';
             const date = document.getElementById('date').value || getLocalDateGMT7();
             allResults = { name, date, perma: null, ghq12: null, dass21: null };
@@ -1283,8 +1401,7 @@
             allResults.dass21 = dass21Scores;
 
             // Hiển thị + (tuỳ chọn) lưu localStorage
-            saveResults(allResults);
-            displayAllResults(allResults);
+
 
             // ==== Chuẩn bị dữ liệu gửi 4 sheet ====
             const now = new Date();
@@ -1308,71 +1425,80 @@
             const permaRow = [ name, date, timeStr, ...permaAnswers ];
             const ghqRow   = [ name, date, timeStr, ...ghqAnswers ];
             const dassRow  = [ name, date, timeStr, ...dassAnswers ];
-            const demoFront = [
-                demo.yob || '',
-                demo.gender || '',
-                demo.edu || '',
-                demo.employ || '',
-                demo.marital || '',
-                demo.income || '',
-                demo.area || '',
-                demo.religion || '',
-                demo.religion === 'Có' ? (demo.religion_detail || '') : '',
-                demo.physical || '',
-                demo.physical === 'Có' ? (demo.physical_detail || '') : '',
-                demo.psych || '',
-                demo.psych === 'Có' ? (demo.psych_detail || '') : ''
+
+            const demo = collectDemographicsFromDOM();
+
+            // Chuẩn hoá 3 câu có “chi tiết”
+            const q8 = demo.religion === 'Có' ? `Có - ${demo.religion_detail || ''}` : (demo.religion || '');
+            const q9 = demo.physical === 'Có' ? `Có - ${demo.physical_detail || ''}` : (demo.physical || '');
+            const q10 = demo.psych === 'Có' ? `Có - ${demo.psych_detail || ''}` : (demo.psych || '');
+
+            const demographicsRow = [
+                name, date, timeStr, 
+                demo.yob || '',                 // Q1 Năm sinh
+                demo.gender || '',              // Q2 Giới tính (Nam/Nữ/Khác ... )
+                demo.edu || '',                 // Q3 Học vấn
+                demo.employ || '',              // Q4 Việc làm
+                demo.marital || '',             // Q5 Hôn nhân
+                demo.income || '',              // Q6 Thu nhập
+                demo.area || '',                // Q7 Khu vực sống
+                q8,                              // Q8 Tôn giáo (Không / Có - chi tiết)
+                q9,                              // Q9 Sức khỏe thể chất (Không / Có - chi tiết)
+                q10                              // Q10 Tiền sử/điều trị rối loạn SHTT (Không / Có - chi tiết)
+            ];
+            const DEMO_HEADERS_13 = [
+                'Họ tên','Ngày làm test','Giờ làm test',
+                'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
+                'Thu nhập','Khu vực sống','Tôn giáo','Vấn đề thể chất (Có/Không)','Tiền sử/điều trị tâm thần (Có/Không)'
+            ];
+
+            const GENERAL_HEADERS = [
+                'Họ tên','Ngày làm test','Giờ làm test',
+                'P','E','R','M','A',
+                'Điểm PERMA tổng hợp',
+                'Tổng điểm GHQ-12',
+                'Điểm Trầm cảm','Điểm Lo âu','Điểm Stress'
                 ];
-            const commonFront = [ name, date, timeStr, ...demoFront ];
 
             // "Tổng hợp"
-            const summaryRow = [
+            // ---- SUMMARY (General) row: ép kiểu trước rồi .toFixed() ----
+            const generalRow = buildGeneralRow({
                 name,
                 date,
                 timeStr,
-                allResults.perma.dimensionScores.P.toFixed(2),
-                allResults.perma.dimensionScores.E.toFixed(2),
-                allResults.perma.dimensionScores.R.toFixed(2),
-                allResults.perma.dimensionScores.M.toFixed(2),
-                allResults.perma.dimensionScores.A.toFixed(2),
-                allResults.perma.totalPermaAverage.toFixed(2),
-                allResults.ghq12.totalScore,
-                allResults.dass21['Trầm cảm'],
-                allResults.dass21['Lo âu'],
-                allResults.dass21['Stress']
-            ];
+                perma: allResults.perma,
+                ghq12: allResults.ghq12,
+                dass21: allResults.dass21
+            });
 
             // Header (tuỳ chọn): chỉ ghi nếu sheet trống
             const headers = {
-                'Tong hop':       ['Họ tên','Ngày làm test','Giờ làm test','P','E','R','M','A','Điểm PERMA tổng hợp','Tổng điểm GHQ-12','Điểm Trầm cảm','Điểm Lo âu','Điểm Stress'],
+                'Demographics':   DEMO_HEADERS_13,
+                'General':        GENERAL_HEADERS,
                 'PERMA-Profiler': ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
                 'GHQ-12':         ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
                 'DASS-21':        ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
             };
 
-            const DEMO_HEADER = [
-            'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
-            'Thu nhập đủ nhu cầu','Khu vực sống',
-            'Tôn giáo (Có/Không)','Tôn giáo - chi tiết',
-            'Vấn đề thể chất (Có/Không)','Thể chất - chi tiết',
-            'Tiền sử/điều trị tâm thần (Có/Không)','Tâm thần - chi tiết'
-            ];
+            const rowsPayload = {
+                'DASS-21'        : dassRow,
+                'Demographics'   : demographicsRow,
+                'GHQ-12'         : ghqRow,                
+                'General'        : generalRow,
+                'PERMA-Profiler' : permaRow,
+                };
 
+            console.log('SENDING payload →', rowsPayload);
+            saveResults(allResults);
+            displayAllResults(allResults);
             // 🔗 Gửi 1 lần cho 4 sheet qua Apps Script Web App
-            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbwXvh3wUdpFU_ntZoSXfK4mWt0kAZqYnJxMvTZPRJluesvW_KFMVPb--U2E82W3MeKGBw/exec';
-            const ok = await sendToAppsScript(
+            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzkGO5RIvCfDGDOA3zIWyy_q-mxJsOs8lBlSpWwd_y4OTluYRiRlAKke9hIsBmG9Nk3LA/exec';
+            const sentok = await sendToAppsScript(
                 WEB_APP_URL,
-                {
-                'Tong hop': summaryRow,
-                'PERMA-Profiler': permaRow,
-                'GHQ-12': ghqRow,
-                'DASS-21': dassRow,
-                'Demographics': commonFront,
-                },
-                headers,  { devReadable: true } 
+                rowsPayload,
+                headers
                 );
-
-            if (!ok) {
+            if (!sentok) {
                 console.warn('Gửi dữ liệu Google Sheets thất bại.');
                 }
             }
@@ -1619,83 +1745,66 @@
         }
 
         function displayPERMAChart(permaDimensionScores, mountSectionEl) {
-            const chartContainer = document.getElementById('perma-chart-container');
-            chartContainer.style.display = 'block';
-            
-            // Di chuyển biểu đồ vào phần PERMA nếu có
-            if (mountSectionEl && !mountSectionEl.contains(chartContainer)) {
-                // Chèn biểu đồ sau tiêu đề h3 của phần PERMA
+            // tạo lại container nếu mất
+            let chartContainer = document.getElementById('perma-chart-container');
+            if (!chartContainer) {
+                chartContainer = document.createElement('div');
+                chartContainer.id = 'perma-chart-container';
+                chartContainer.innerHTML = `
+                <h3>Biểu đồ PERMA</h3>
+                <canvas id="perma-chart"></canvas>
+                `;
+            }
+
+            // 👉 Đặt biểu đồ LÊN TRÊN: ngay dưới tiêu đề h3 của phần PERMA
+            if (mountSectionEl) {
                 const h3 = mountSectionEl.querySelector('h3');
-                if (h3 && h3.nextSibling) {
+                if (!mountSectionEl.contains(chartContainer)) {
+                if (h3) {
+                    // chèn NGAY SAU tiêu đề
                     mountSectionEl.insertBefore(chartContainer, h3.nextSibling);
-                } else if (h3) {
-                    mountSectionEl.appendChild(chartContainer);
                 } else {
+                    // nếu không tìm thấy h3 thì đặt lên đầu section
                     mountSectionEl.prepend(chartContainer);
                 }
+                } else {
+                // nếu container đã nằm trong section thì đảm bảo vị trí ngay sau h3
+                const currentParent = chartContainer.parentElement;
+                if (currentParent === mountSectionEl && h3 && chartContainer.previousElementSibling !== h3) {
+                    mountSectionEl.insertBefore(chartContainer, h3.nextSibling);
+                }
+                }
             }
-            
-            const ctx = document.getElementById('perma-chart').getContext('2d');
-            if (permaChart) {
-                permaChart.destroy();
-            }
-            permaChart = new Chart(ctx, {
+
+            chartContainer.style.display = 'block';
+
+            // vẽ chart an toàn
+            try {
+                const ctx = chartContainer.querySelector('#perma-chart').getContext('2d');
+                if (permaChart) permaChart.destroy();
+                permaChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Cảm xúc tích cực (P)', 'Sự gắn kết (E)', 'Mối quan hệ (R)', 'Ý nghĩa (M)', 'Thành tựu (A)'],
+                    labels: ['Cảm xúc tích cực (P)','Sự gắn kết (E)','Mối quan hệ (R)','Ý nghĩa (M)','Thành tựu (A)'],
                     datasets: [{
-                        label: 'Điểm các khía cạnh PERMA',
-                        data: [permaDimensionScores.P, permaDimensionScores.E, permaDimensionScores.R, permaDimensionScores.M, permaDimensionScores.A],
-                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
-                        borderColor: 'rgba(74, 144, 226, 1)',
-                        pointBackgroundColor: 'rgba(74, 144, 226, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(74, 144, 226, 1)'
+                    label: 'Điểm các khía cạnh PERMA',
+                    data: [permaDimensionScores.P, permaDimensionScores.E, permaDimensionScores.R, permaDimensionScores.M, permaDimensionScores.A],
+                    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    pointBackgroundColor: 'rgba(74, 144, 226, 1)',
+                    pointBorderColor: '#fff'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { display: true },
-                            suggestedMin: 0,
-                            suggestedMax: 10,
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 2,
-                                maxTicksLimit: 6,
-                                callback: function(value) {
-                                    if (Number.isInteger(value)) {
-                                        return value;
-                                    }
-                                }
-                            },
-                            pointLabels: {
-                                font: { size: 11 }
-                            },
-                            grid: { circular: true } 
-                        }
-                    },
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    label += context.parsed.r.toFixed(2); 
-                                    const dimensionLetter = context.label.split(' ')[0]; 
-                                    const interpretationSpan = getPERMADimensionInterpretation(context.parsed.r, dimensionLetter);
-                                    const interpretationText = interpretationSpan.replace(/<[^>]*>/g, ''); 
-                                    return [label, interpretationText];
-                                }
-                            }
-                        }
-                    }
+                    scales: { r: { suggestedMin: 0, suggestedMax: 10, ticks: { stepSize: 2 } } },
+                    plugins: { legend: { position: 'top' } }
                 }
-            });
+                });
+            } catch (e) {
+                console.warn('Render PERMA chart failed:', e);
+            }
         }
 
         function saveResults(results) {
