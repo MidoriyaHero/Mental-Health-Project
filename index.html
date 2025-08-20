@@ -164,9 +164,7 @@
         display: flex;
         justify-content: space-around; /* This was your original approach for this element */
         align-items: flex-start; /* Better for multi-line wrapped text */
-        /* text-align: left; /* Override text-align:center from .label if it causes issues for flex children */
-                            /* For flex containers, child alignment is usually handled by justify/align + text-align on children */
-    }
+       }
 
     /* The four span elements inside .scale-0-3.label */
     .scale-0-3.label span {
@@ -178,13 +176,9 @@
         /* Key additions for handling long text: */
         overflow-wrap: break-word; /* Allow text to wrap */
         word-wrap: break-word;     /* Older browser compatibility */
-        line-height: 1.2;          /* Adjust for readability of wrapped text */
-        
-        /* Consider a slightly smaller font size if text is still too large for 24% width */
-        font-size: 0.9em; /* This makes it 0.9 * 0.9em (if .label is 0.9em) = ~0.81em total. Adjust. */
-                        /* Or try: font-size: inherit; and control size via .scale-0-3.label or .label */
-        /* Make sure color is inherited or set if it's not showing correctly */
-        color: #555; /* Explicitly set, though should be inherited */
+        line-height: 1.2;          
+        font-size: 0.9em; 
+        color: #555; 
     }
 
     #results-content {
@@ -255,7 +249,7 @@
         margin-top: 15px;
     }
 
-    @media (max-width: 768px) {
+    @media (max-width: 1000px) {
         .tabs {
             flex-direction: column;
         }
@@ -305,6 +299,19 @@
         }
     }
 
+    /* Tab bị khóa */
+    .tab-button.locked {
+    opacity: .45;
+    pointer-events: none;   /* chặn chuột */
+    cursor: not-allowed;
+    }
+
+    /* (tuỳ chọn) thêm biểu tượng ổ khoá */
+    .tab-button.locked::after {
+    content: " 🔒";
+    font-size: 0.9em;
+    }
+
     #perma-chart-container {
         margin-top: 20px;
         background-color: white;
@@ -327,6 +334,191 @@
         margin-left: 10px;
         color: #555;
     }
+    .thank-you-card {
+    background: #f0fff4; /* xanh lá nhạt */
+    border: 2px solid #38a169;
+    padding: 1rem;
+    border-radius: 12px;
+    color: #22543d;
+    font-family: 'Segoe UI', Tahoma, sans-serif;
+    margin-top:0rem;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    }
+
+    .thank-you-card h3 {
+        margin-top: 0rem;
+        margin-bottom: 0.75rem;
+        color: #2f855a;
+    }
+
+    .thank-you-card p {
+        margin-bottom: 0.75rem;
+        line-height: 1.6;
+    }
+
+    .italic-text {
+        font-style: italic;
+    }
+
+    .highlight-text {
+        font-weight: bold;
+        color: #276749;
+    }
+
+    .gift-button {
+        display: inline-block;
+        margin-top: 1rem;
+        background: #38a169;
+        color: #fff;
+        padding: 0.75rem 1.25rem;
+        text-decoration: none;
+        border-radius: 8px;
+        font-weight: bold;
+        transition: background 0.3s;
+    }
+
+    .gift-button:hover {
+        background: #2f855a;
+    }
+
+    .highlight-intro {
+        background: #ebf8ff; /* xanh dương nhạt */
+        border: 2px solid #3182ce; /* xanh dương đậm */
+        color: #2b6cb0;
+        padding: 0.75rem 1rem;
+        border-radius: 8px;
+        font-size: 1rem;
+        font-family: 'Segoe UI', Tahoma, sans-serif;
+        margin-bottom: 1rem;
+        box-shadow: 0 4px 8px rgba(0,0,0,0.05);
+    }
+
+    .tab-nav {
+    margin-top: 16px; padding: 10px 12px;
+    display: flex; justify-content: space-between; align-items: center;
+    border-top: 1px dashed #e2e8f0;
+    }
+    .nav-arrow {
+    display: inline-flex; align-items: center; gap: 8px;
+    border: none; border-radius: 999px; padding: 8px 14px;
+    background: #edf2f7; color: #2d3748; cursor: pointer;
+    }
+    .nav-arrow:hover { background: #e2e8f0; }
+    .nav-arrow[disabled] { opacity: .45; cursor: not-allowed; }
+    .nav-arrow.primary { background: var(--primary-color); color: #fff; }
+    .nav-label { font-weight: 600; }
+
+    /* --- Demographics polish pack --- */
+    .form-card {
+    background: #fff;
+    border: 1px solid #e5e9f2;
+    border-radius: 12px;
+    padding: 18px;
+    box-shadow: 0 6px 16px rgba(0,0,0,.04);
+    }
+
+    #demographics h2 {
+    margin: 0 0 14px;
+    font-weight: 700;
+    color: #2b6cb0; /* xanh nhẹ đồng bộ tab */
+    }
+
+    .q {
+    margin: 14px 0 18px;
+    }
+    .q > label,
+    .q .q-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    }
+    .q small.help {
+        display: block;
+        color: #6b7280;
+        margin-top: 6px;
+    }
+
+    /* input + select thống nhất */
+    #demographics input[type="text"],
+    #demographics select {
+        width: 100%;
+        padding: 10px 12px;
+        border: 1px solid #d7dbe5;
+        border-radius: 10px;
+        background: #fff;
+        outline: none;
+        transition: box-shadow .2s, border-color .2s;
+    }
+    #demographics input[type="text"]:focus,
+    #demographics select:focus {
+        border-color: #4a90e2;
+        box-shadow: 0 0 0 4px rgba(74,144,226,.12);
+    }
+
+    /* radio nhóm thành hàng “chip” */
+    .chips { display: flex; flex-wrap: wrap; gap: 8px; }
+    .chips input[type="radio"] { display: none; }
+    .chips label {
+        display: inline-block;
+        padding: 8px 12px;
+        border: 1px solid #d7dbe5;
+        border-radius: 999px;
+        cursor: pointer;
+        user-select: none;
+        transition: all .15s;
+        background: #f7fafc;
+    }
+    .chips input[type="radio"]:checked + label {
+        border-color: var(--primary-color);
+        background: rgba(74,144,226,.12);
+        color: #1e3a8a;
+    }
+
+    /* 2 cột trên màn hình rộng */
+    @media (min-width: 900px) {
+        #demographics .grid-2 {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 16px 24px;
+        }
+        #demographics .grid-2 .full { grid-column: 1 / -1; }
+    }
+
+    /* thanh hành động */
+    .action-bar {
+        margin-top: 10px;
+        padding-top: 12px;
+        border-top: 1px dashed #e2e8f0;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+    .action-bar .muted { color: #6b7280; font-size: .95em; }
+
+    /* Consent styles */
+    .consent-text { 
+        max-height: 700px; overflow-y: auto; 
+        padding-right: 8px; line-height: 1.6;
+    }
+    .consent-text h3 { margin: 12px 0 6px; color: #334155; }
+    .consent-check {
+        margin-top: 14px; padding: 10px 12px;
+        background: #fefce8; border: 1px solid #facc15; border-radius: 10px;
+    }
+    #btn-consent-next[disabled] { opacity: .6; cursor: not-allowed; }
+    
+    .tab-button.locked {
+        opacity: .45;
+        pointer-events: none;
+        cursor: not-allowed;
+    }
+    .invalid {
+        border-color: #dc3545 !important;
+        box-shadow: 0 0 0 3px rgba(220,53,69,.12);
+        }
+
+    .group-invalid .chips { outline: 2px solid rgba(220,53,69,.6); border-radius: 10px; }
+
 </style>
 </head>
 <body>
@@ -339,7 +531,7 @@
     </div>
     <div>
         <label for="date">Ngày làm test:</label>
-        <input type="date" id="date">
+        <input type="text" id="date" placeholder="dd-mm-yyyy">
     </div>
     <div id="google-auth-section">
         <button id="authorize_button" style="display:none;">Đăng nhập Google để lưu kết quả</button>
@@ -348,18 +540,210 @@
     </div>
 
     <div class="tabs">
-        <button class="tab-button active" onclick="openTab(event, 'perma')">PERMA Profiler</button>
-        <button class="tab-button" onclick="openTab(event, 'ghq12')">GHQ-12</button>
-        <button class="tab-button" onclick="openTab(event, 'dass21')">DASS-21</button>
-        <button class="tab-button" onclick="openTab(event, 'results')">Kết quả</button>
+    <button class="tab-button active" onclick="openTab(event, 'consent')">Thông tin & Đồng thuận</button>
+    <button class="tab-button" onclick="openTab(event, 'demographics')">Thông tin nhân khẩu học</button>
+    <button class="tab-button" onclick="openTab(event, 'perma')">PERMA Profiler</button>
+    <button class="tab-button" onclick="openTab(event, 'ghq12')">GHQ-12</button>
+    <button class="tab-button" onclick="openTab(event, 'dass21')">DASS-21</button>
+    <button class="tab-button" onclick="openTab(event, 'results')">Kết quả</button>
+    </div>
+
+    <!-- START INFORM TABS -->
+    <div id="consent" class="tab-content active">
+        <div class="form-card">
+            <h2>Thông tin nghiên cứu & Đồng thuận tham gia</h2>
+
+            <div class="consent-text">
+            <p><strong>Xin chào anh/chị,</strong></p>
+            <p>Nhóm nghiên cứu xin cảm ơn anh/chị vì đã dành thời gian tìm hiểu về nghiên cứu mà chúng tôi đang thực hiện.</p>
+
+            <h3>1) Tên đề tài nghiên cứu</h3>
+            <p><strong>TÍNH ỨNG DỤNG CỦA MÔ HÌNH DUAL CONTINUA TRONG CHĂM SÓC SỨC KHỎE TINH THẦN NGƯỜI VIỆT NAM</strong></p>
+
+            <h3>2) Thông tin liên lạc</h3>
+            <p><strong>Nghiên cứu viên chính:</strong><br>
+            ThS.BS. Nguyễn Trung Nghĩa – Phó Giám đốc Trung tâm Chăm sóc Sức khỏe Tinh thần<br>
+            ThS. NTL. Phạm Hoài Thu – Thạc sĩ Tâm lý nguồn, Trung tâm Chăm sóc Sức khỏe Tinh thần</p>
+            <p><strong>Địa chỉ:</strong> Trung tâm Chăm sóc Sức khỏe Tinh thần – BV ĐKQT Vinmec Times City, 458 Minh Khai, Vĩnh Tuy, Hai Bà Trưng, Hà Nội<br>
+            <strong>Email:</strong> phamhoaithu810@gmail.com</p>
+
+            <h3>3) Đối tượng nghiên cứu</h3>
+            <p>Người Việt Nam từ 18 tuổi trở lên, không phân biệt giới tính, nghề nghiệp hay nơi cư trú.</p>
+
+            <h3>4) Mục đích nghiên cứu</h3>
+            <ul>
+                <li>Chuẩn hóa các công cụ tâm lý dành riêng cho người Việt Nam để đánh giá hạnh phúc và khó khăn về sức khỏe tinh thần.</li>
+                <li>Minh chứng tính ứng dụng của mô hình <em>Dual Continua</em> trong chăm sóc sức khỏe tinh thần người Việt.</li>
+            </ul>
+
+            <h3>5) Quy trình tham gia</h3>
+            <p>Anh/chị sẽ hoàn thành 3 bộ câu hỏi (tổng 66 câu): DASS-21, GHQ-12 và PERMA Profiler.</p>
+
+            <h3>6) Lợi ích</h3>
+            <ul>
+                <li><strong>Cá nhân:</strong> Nhận báo cáo tóm tắt chỉ báo sức khỏe tinh thần sau khi gửi bài.</li>
+                <li><strong>Cộng đồng:</strong> Dữ liệu giúp chuẩn hóa thang đo và phát triển chương trình hỗ trợ tâm lý cho người Việt.</li>
+            </ul>
+
+            <h3>7) Rủi ro</h3>
+            <p>Tham gia hoàn toàn tự nguyện. Một số câu hỏi có thể gây khó chịu; anh/chị có thể dừng bất cứ lúc nào mà không có hậu quả.</p>
+
+            <h3>8) Bảo mật & quyền riêng tư</h3>
+            <ul>
+                <li>Nghiên cứu không thu thập thông tin định danh cụ thể.</li>
+                <li>Dữ liệu chỉ do trưởng nhóm nghiên cứu và người được ủy quyền bằng văn bản truy cập, phục vụ phân tích và báo cáo khoa học.</li>
+            </ul>
+
+            <h3>9) Đồng thuận</h3>
+            <p>Bằng cách đánh dấu “Tôi đồng ý” và tiếp tục, tôi xác nhận đã đọc, hiểu và tự nguyện tham gia; tôi có thể rút lui bất cứ lúc nào.</p>
+            </div>
+
+            <div class="consent-check">
+            <label>
+                <input type="checkbox" id="consent-agree">
+                Tôi đã đọc và <strong>đồng ý</strong> tham gia nghiên cứu này.
+            </label>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- START DEMOGRAPHICS TABS -->
+
+    <div id="consent" class="tab-content active">
+        <div class="form-card">
+            <h2>Thông tin nghiên cứu & Đồng thuận tham gia</h2>
+            <div class="consent-text">
+            <p><strong>Xin chào anh/chị,</strong></p>
+            <p>Nhóm nghiên cứu xin cảm ơn anh/chị vì đã dành thời gian tìm hiểu về nghiên cứu mà chúng tôi đang thực hiện...</p>
+            <!-- ở đây copy nguyên văn nội dung bạn đã gửi, chia nhỏ thành <p> hoặc <ul> cho dễ đọc -->
+            </div>
+
+            <div class="consent-check">
+            <label>
+                <input type="checkbox" id="consent-agree">
+                Tôi đã đọc và đồng ý tham gia nghiên cứu này.
+            </label>
+            </div>
+
+            <div class="action-bar">
+            <button class="nav-arrow primary" id="btn-consent-next">Tiếp tục ▶︎</button>
+            </div>
+        </div>
+    </div>
+    <!-- --- DEMOGRAPHICS TABS --- --> 
+    <div id="demographics" class="tab-content">
+        <div class="form-card">
+            <h2>Thông tin nhân khẩu học</h2>
+
+            <div class="grid-2">
+            <!-- 1) Năm sinh -->
+            <div class="q">
+                <label for="demo-yob">1) Năm sinh của bạn:</label>
+                <input type="text" id="demo-yob" placeholder="VD: 1995" inputmode="numeric">
+            </div>
+
+            <!-- 2) Giới tính -->
+            <div class="q">
+                <div class="q-label">2) Giới tính của bạn:</div>
+                <div class="chips">
+                <input id="g1" type="radio" name="demo-gender" value="Nam"><label for="g1">Nam</label>
+                <input id="g2" type="radio" name="demo-gender" value="Nữ"><label for="g2">Nữ</label>
+                <input id="g3" type="radio" name="demo-gender" value="Khác"><label for="g3">Khác</label>
+                </div>
+                <input type="text" id="demo-gender-other" placeholder="Ghi rõ (nếu chọn Khác)" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 3) Học vấn -->
+            <div class="q">
+                <label for="demo-edu">3) Trình độ học vấn cao nhất của bạn là:</label>
+                <select id="demo-edu">
+                <option value="">-- Chọn --</option>
+                <option>Tiểu học</option><option>Trung học cơ sở</option>
+                <option>Trung học phổ thông</option><option>Đại học</option>
+                <option>Sau đại học – Thạc sĩ hoặc tương đương</option>
+                <option>Sau đại học – Tiến sĩ</option>
+                </select>
+            </div>
+
+            <!-- 4) Việc làm -->
+            <div class="q">
+                <label for="demo-employ">4) Tình trạng việc làm hiện tại của bạn là:</label>
+                <select id="demo-employ">
+                <option value="">-- Chọn --</option>
+                <option>Đang làm việc</option><option>Thất nghiệp</option>
+                <option>Sinh viên</option><option>Đã nghỉ hưu</option>
+                </select>
+            </div>
+
+            <!-- 5) Hôn nhân -->
+            <div class="q">
+                <label for="demo-marital">5) Tình trạng hôn nhân của bạn là:</label>
+                <select id="demo-marital">
+                <option value="">-- Chọn --</option>
+                <option>Độc thân</option><option>Đã kết hôn</option>
+                <option>Đã ly hôn</option><option>Góa</option>
+                </select>
+            </div>
+
+            <!-- 6) Thu nhập -->
+            <div class="q full">
+                <div class="q-label">6) Hãy chọn mô tả phù hợp với bạn:</div>
+                <div class="chips">
+                <input id="i1" type="radio" name="demo-income" value="Không đủ"><label for="i1">Thu nhập hiện tại không đủ cho các nhu cầu của tôi</label>
+                <input id="i2" type="radio" name="demo-income" value="Đủ"><label for="i2">Thu nhập hiện tại đủ cho các nhu cầu của tôi</label>
+                <input id="i3" type="radio" name="demo-income" value="Nhiều hơn"><label for="i3">Thu nhập hiện tại nhiều hơn so với các nhu cầu của tôi</label>
+                </div>
+            </div>
+
+            <!-- 7) Khu vực sống -->
+            <div class="q">
+                <div class="q-label">7) Bạn đang sống ở:</div>
+                <div class="chips">
+                <input id="a1" type="radio" name="demo-area" value="Khu vực thành thị"><label for="a1">Khu vực thành thị</label>
+                <input id="a2" type="radio" name="demo-area" value="Khu vực nông thôn"><label for="a2">Khu vực nông thôn</label>
+                </div>
+            </div>
+
+            <!-- 8) Tôn giáo -->
+            <div class="q">
+                <div class="q-label">8) Bạn có theo tôn giáo nào không?</div>
+                <div class="chips">
+                <input id="r0" type="radio" name="demo-religion" value="Không"><label for="r0">Không</label>
+                <input id="r1" type="radio" name="demo-religion" value="Có"><label for="r1">Có, vui lòng ghi rõ:</label>
+                </div>
+                <input type="text" id="demo-religion-detail" placeholder="Vui lòng ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 9) Thể chất -->
+            <div class="q">
+                <div class="q-label">9) Bạn có đang gặp vấn đề gì về sức khỏe thể chất không?</div>
+                <div class="chips">
+                <input id="p0" type="radio" name="demo-physical" value="Không"><label for="p0">Không</label>
+                <input id="p1" type="radio" name="demo-physical" value="Có"><label for="p1">Có, vui lòng ghi rõ:</label>
+                </div>
+                <input type="text" id="demo-physical-detail" placeholder="Vui lòng ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+
+            <!-- 10) Tâm thần -->
+            <div class="q">
+                <div class="q-label">10)  Bạn đã từng được chẩn đoán hay tiếp nhận điều trị rối loạn sức khỏe tâm thần trước đây không?</div>
+                <div class="chips">
+                <input id="s0" type="radio" name="demo-psych" value="Không"><label for="s0">Không</label>
+                <input id="s1" type="radio" name="demo-psych" value="Có"><label for="s1">Có, vui lòng ghi rõ:</label>
+                </div>
+                <input type="text" id="demo-psych-detail" placeholder="Vui lòng ghi rõ" style="display:none;margin-top:8px;">
+            </div>
+            </div>
+        </div>
     </div>
 
     <div id="perma" class="tab-content active">
         <h2>PERMA Profiler</h2>
         <p>Đánh giá sức khỏe tinh thần và hạnh phúc dựa trên lý thuyết PERMA của Martin Seligma.</p>
         <div class="legend">
-            <h3>Hãy trả lời 15 câu hỏi dựa trên cảm nhận của bạn trên thang điểm từ 0 (thấp nhất) đến 10 (cao nhất):</h3>
-            <p>Ví dụ: Nếu câu hỏi hỏi về mức độ vui vẻ và bạn cảm thấy mình rất vui vẻ, hãy chọn điểm 9 hoặc 10. Nếu bạn cảm thấy không vui vẻ chút nào, hãy chọn điểm 0.</p>
+            <h3>Hãy trả lời 23 câu hỏi dựa trên cảm nhận của bạn trên thang điểm từ 0 đến 10:</h3>
+            <!-- <p>Ví dụ: Nếu câu hỏi hỏi về mức độ vui vẻ và bạn cảm thấy mình rất vui vẻ, hãy chọn điểm 9 hoặc 10. Nếu bạn cảm thấy không vui vẻ chút nào, hãy chọn điểm 0.</p> -->
         </div>
         <div id="perma-questions"></div>
     </div>
@@ -369,7 +753,7 @@
         <p>Đánh giá các vấn đề sức khỏe tâm thần phổ biến trong 4 tuần gần đây.</p>
         <div class="legend">
             <h3>Vui lòng cho biết bạn có gặp các vấn đề sau đây trong khoảng 4 tuần trở lại đây KHÔNG?</h3>
-            <p>Thang điểm: 0 = Hoàn toàn không, 1 = Ít hơn thường lệ, 2 = Giống như thường lệ, 3 = Nhiều hơn thường lệ</p>
+            <!-- <p>Thang điểm: 0 = Hoàn toàn không, 1 = Ít hơn thường lệ, 2 = Giống như thường lệ, 3 = Nhiều hơn thường lệ</p> -->
         </div>
         <div id="ghq12-questions"></div>
     </div>
@@ -379,106 +763,91 @@
         <p>Đánh giá mức độ của các triệu chứng Trầm cảm, Lo âu và Stress trong tuần qua.</p>
         <div class="legend">
             <h3>Vui lòng đọc kỹ từng mục sau và chọn số phù hợp nhất cho thấy bạn đã trải qua tình trạng đó trong TUẦN QUA.</h3>
-            <p>Thang điểm: 0 = Không đúng với tôi chút nào, 1 = Đúng với tôi 1 phần, hay thỉnh thoảng mới đúng, 2 = Đúng với tôi phần lớn thời gian, hay phần lớn là đúng, 3 = Hoàn toàn đúng với tôi, hay đúng hầu hết thời gian</p>
+            <!-- <p>Thang điểm: 0 = Không đúng với tôi chút nào, 1 = Đúng với tôi 1 phần, hay thỉnh thoảng mới đúng, 2 = Đúng với tôi phần lớn thời gian, hay phần lớn là đúng, 3 = Hoàn toàn đúng với tôi, hay đúng hầu hết thời gian</p> -->
         </div>
         <div id="dass21-questions"></div>
     </div>
 
     <div id="results" class="tab-content">
         <h2>Kết quả Đánh giá</h2>
-        <p id="results-intro">Xem lại kết quả của các bài đánh giá đã hoàn thành.</p>
+        <p id="results-intro" class="highlight-intro">
+            <strong>Nhấn nút xanh</strong> để hệ thống phân tích và hiển thị kết quả.
+        </p>
         <div id="results-content">
             <p class="completion-message">Vui lòng hoàn thành các bài test ở các tab trước để xem kết quả.</p>
         </div>
-        <button class="clear-data-button" onclick="clearData()">Xóa tất cả dữ liệu đã lưu</button>
+        <!-- <button class="clear-data-button" onclick="clearData()">Xóa tất cả dữ liệu đã lưu</button> -->
         <div id="perma-chart-container" style="display: none;">
             <h3>Biểu đồ PERMA</h3>
             <canvas id="perma-chart"></canvas>
         </div>
         <p></p>
-        <p> Tín đẹp trai 😊</p>
-        <button onclick="window.location.href='https://fb.com/trungtin0105';">
-            Nếu bạn cần tìm hiểu thêm hoặc cần hỗ trợ, 👉 hãy nhấn vào đây nghen!
-        </button>
+        <div class="thank-you-card">
+            <h3>💖 Lời cảm ơn từ Bác sĩ Nghĩa</h3>
+            <p>
+                Nếu bạn thấy bài test này hữu ích, hãy giúp chúng mình chia sẻ đến người thân, bạn bè của bạn nhé.
+            </p>
+            <p>
+                <strong>Bác sĩ Nghĩa</strong> cảm ơn bạn rất nhiều vì sự quan tâm của bạn dành cho sức khỏe tinh thần của mình và những người xung quanh.
+            </p>
+            <p class="italic-text">
+                Xin cảm ơn bạn,<br>
+                <span class="highlight-text">Vì đã ở đây, vào lúc này.</span>
+            </p>
+            <a class="gift-button" href="https://docs.google.com/document/d/1k8g7YOSLEt070plJiXBv0cOW6JImIQmm9Fx_26qKY1A/edit?tab=t.0" target="_blank">
+                🎁 Nhấn vào đây để nhận một phần quà cảm ơn từ team chúng mình nghen!
+            </a>
+        </div>
         <p></p>
     </div>
 
+
+    <!-- START JAVASCRIPT -->
     <script type="text/javascript">
-    // --- Google Sheets API Integration (OAuth2, API Key, gapi, gis) ---
-    // TODO: Replace with your actual values
-    const CLIENT_ID = '';
-    const API_KEY = '';
-    const SHEET_ID = '';
-    const DISCOVERY_DOC = 'https://sheets.googleapis.com/$discovery/rest?version=v4';
-    const SCOPES = 'https://www.googleapis.com/auth/spreadsheets';
+    async function sendToAppsScript(webAppUrl, rows, headers, opts = {}) {
+        const { devReadable = false } = opts;
+        const payload = JSON.stringify({ rows, headers, t: Date.now() });
 
-    let tokenClient;
-    let gapiInited = false;
-    let gisInited = false;
-
-    document.getElementById('authorize_button').style.display = 'none';
-    document.getElementById('signout_button').style.display = 'none';
-
-    function gapiLoaded() {
-        gapi.load('client', initializeGapiClient);
-    }
-
-    async function initializeGapiClient() {
-        await gapi.client.init({
-            apiKey: API_KEY,
-            discoveryDocs: [DISCOVERY_DOC],
-        });
-        gapiInited = true;
-        maybeEnableButtons();
-    }
-
-    function gisLoaded() {
-        tokenClient = google.accounts.oauth2.initTokenClient({
-            client_id: CLIENT_ID,
-            scope: SCOPES,
-            callback: '', // defined later
-        });
-        gisInited = true;
-        maybeEnableButtons();
-    }
-
-    function maybeEnableButtons() {
-        if (gapiInited && gisInited) {
-            document.getElementById('authorize_button').style.display = 'inline-block';
-        }
-    }
-
-    function handleAuthClick() {
-        tokenClient.callback = async (resp) => {
-            if (resp.error !== undefined) {
-                alert('Google Auth error: ' + resp.error);
-                throw (resp);
+        if (navigator.sendBeacon && document.visibilityState === 'hidden') {
+            try {
+            const beaconOk = navigator.sendBeacon(
+                webAppUrl,
+                new Blob([payload], { type: 'text/plain;charset=utf-8' })
+            );
+            return beaconOk; // true/false
+            } catch (e) {
+            console.warn('sendBeacon failed, fallback to fetch no-cors', e);
             }
-            document.getElementById('signout_button').style.display = 'inline-block';
-            document.getElementById('authorize_button').innerText = 'Refresh';
-            document.getElementById('google-auth-status').textContent = 'Đã đăng nhập Google.';
-        };
-
-        if (gapi.client.getToken() === null) {
-            tokenClient.requestAccessToken({prompt: 'consent'});
-        } else {
-            tokenClient.requestAccessToken({prompt: ''});
         }
-    }
 
-    function handleSignoutClick() {
-        const token = gapi.client.getToken();
-        if (token !== null) {
-            google.accounts.oauth2.revoke(token.access_token);
-            gapi.client.setToken('');
-            document.getElementById('google-auth-status').textContent = 'Đã đăng xuất.';
-            document.getElementById('authorize_button').innerText = 'Đăng nhập Google để lưu kết quả';
-            document.getElementById('signout_button').style.display = 'none';
+        if (devReadable) {
+            try {
+            const resp = await fetch(webAppUrl, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: payload,
+            });
+            const json = await resp.json();
+            return !!json.ok;
+            } catch (e) {
+            console.warn('Readable fetch failed (likely CORS). Falling back to no-cors.', e);
+            }
         }
-    }
 
-    document.getElementById('authorize_button').onclick = handleAuthClick;
-    document.getElementById('signout_button').onclick = handleSignoutClick;
+        try {
+            await fetch(webAppUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+            body: payload,
+            keepalive: true,
+            });
+            return true; // no-cors: luôn coi như gửi OK
+        } catch (e) {
+            console.error('Apps Script error:', e);
+            return false;
+        }
+        }
 
     // --- Append results to Google Sheet ---
     async function appendResultsToSheet(rowData) {
@@ -513,81 +882,106 @@
     
     <script>
         // --- Question Data ---
-        const permaQuestions = [
-            /*1 A*/ "Bạn có thường xuyên cảm thấy mình đang tiến gần hơn tới các mục tiêu của mình?",
-            /*2 E*/ "Bạn có thường xuyên bị cuốn hút hoặc chìm đắm vào những việc mình đang làm?",
-            /*3 P*/ "Nhìn chung, bạn có thường xuyên cảm thấy vui vẻ không?",
-            /*4 A*/ "Bạn có thường xuyên đạt được các mục tiêu quan trọng mà bạn tự đặt ra cho mình?",
-            /*5 M*/ "Nhìn chung, bạn có sống một cuộc sống có ý nghĩa và mục đích không? (Nếu có thì ở mức độ nào?)",
-            /*6 R*/ "Khi bạn cần, bạn có thường nhận được sự hỗ trợ và giúp đỡ của người khác không?",
-            /*7 M*/ "Nhìn chung, bạn có cảm thấy những gì mình làm trong cuộc đời mình là có giá trị và xứng đáng không? (Nếu có thì ở mức độ nào?)",
-            /*8 E*/ "Nhìn chung, bạn có cảm thấy phấn khích và thích thú với những điều xung quanh? (Nếu có thì ở mức độ nào?)",
-            /*9 P*/ "Nhìn chung, bạn có thường xuyên cảm thấy tích cực không?",
-            /*10 A*/ "Bạn có thường xuyên có thể xử lý hết các trách nhiệm của mình (cả trong công việc và ở gia đình) không?",
-            /*11 E*/ "Bạn có thường xuyên có trải nghiệm làm gì đó mình thích và quên không để ý bao nhiêu thời gian đã trôi qua?",
-            /*12 R*/ "Bạn có cảm thấy mình đang được yêu thương không? (Nếu có thì ở mức độ nào?)",
-            /*13 M*/ "Bạn cảm thấy mình có định hướng trong cuộc sống đến mức nào?",
-            /*14 R*/ "Bạn hài lòng với các mối quan hệ cá nhân của mình đến mức nào?",
-            /*15 P/Happiness*/ "Nhìn chung, bạn hài lòng hoặc mãn nguyện hoặc với cuộc sống của mìnhh đến mức nào?",
+        const permaItems = [
+        { code: 'A1', q: 'Bạn có thường xuyên cảm thấy mình đang tiến gần hơn đến việc hoàn thành các mục tiêu của mình?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'E1', q: 'Bạn có thường xuyên chìm đắm vào những việc mình đang làm?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'P1', q: 'Nhìn chung, bạn có thường xuyên cảm thấy vui vẻ?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'N1', q: 'Nhìn chung, bạn có thường xuyên cảm thấy lo âu?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'A2', q: 'Bạn có thường xuyên đạt được những mục tiêu quan trọng mà bạn tự đặt ra cho mình?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'H1', q: 'Nhìn chung, bạn đánh giá tình hình sức khỏe của mình như thế nào?', left: 'Tệ hại', right: 'Tuyệt vời' },
+        { code: 'M1', q: 'Nhìn chung, bạn đang sống một cuộc sống có mục tiêu và ý nghĩa ở mức độ nào?', left: 'Hoàn toàn vô nghĩa', right: 'Hoàn toàn có ý nghĩa' },
+        { code: 'R1', q: 'Khi cần, bạn có thường nhận được sự giúp đỡ và hỗ trợ từ người khác?', left: 'Không được hỗ trợ', right: 'Luôn được hỗ trợ' },
+        { code: 'M2', q: 'Nhìn chung, bạn cảm thấy những gì bạn làm trong cuộc sống là có giá trị và xứng đáng ở mức độ nào?', left: 'Hoàn toàn không', right: 'Hoàn toàn có' },
+        { code: 'E2', q: 'Nhìn chung, bạn có cảm thấy hào hứng và quan tâm đến nhiều thứ trong cuộc sống?', left: 'Hoàn toàn không', right: 'Hoàn toàn có' },
+        { code: 'L',  q: 'Bạn cảm thấy cô đơn ở mức nào trong cuộc sống thường ngày?', left: 'Hoàn toàn không', right: 'Hoàn toàn có' },
+        { code: 'H2', q: 'Mức độ hài lòng của bạn với tình trạng sức khỏe thể chất hiện tại', left: 'Không hài lòng', right: 'Vô cùng hài lòng' },
+        { code: 'P2', q: 'Nhìn chung, bạn có thường xuyên cảm thấy tích cực?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'N2', q: 'Nhìn chung, bạn có thường xuyên cảm thấy tức giận?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'A3', q: 'Bạn có thường xuyên đảm đương/hoàn thành tốt các trách nhiệm của mình?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'N3', q: 'Nhìn chung, bạn có thường xuyên cảm thấy buồn bã?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'E3', q: 'Bạn có thường xuyên làm điều gì đó mình thích mà quên bẵng cả thời gian?', left: 'Không bao giờ', right: 'Luôn luôn' },
+        { code: 'H3', q: 'So với những người cùng độ tuổi và giới tính, sức khỏe của bạn thế nào?', left: 'Tệ hại', right: 'Xuất sắc' },
+        { code: 'R2', q: 'Bạn cảm thấy mình được yêu thương ở mức độ nào?', left: 'Hoàn toàn không', right: 'Hoàn toàn có' },
+        { code: 'M3', q: 'Nhìn chung, bạn cảm thấy cuộc sống của mình có định hướng ở mức độ nào?', left: 'Hoàn toàn không', right: 'Hoàn toàn có' },
+        { code: 'R3', q: 'Bạn cảm thấy hài lòng với những mối quan hệ cá nhân ở mức độ nào?', left: 'Hoàn toàn không hài lòng', right: 'Hoàn toàn hài lòng' },
+        { code: 'P3', q: 'Nhìn chung, bạn cảm thấy mình đủ đầy/mãn nguyện ở mức độ nào?', left: 'Hoàn toàn không', right: 'Hoàn toàn đủ đầy' },
+        { code: 'HAPPY', q: 'Khi xem xét mọi khía cạnh, bạn sẽ nói rằng mình đang hạnh phúc ở mức độ nào?', left: 'Hoàn toàn không hạnh phúc', right: 'Hoàn toàn hạnh phúc' }
         ];
-        const permaLabelsLeft = [ "Không bao giờ", "Không bao giờ", "Không bao giờ", "Không bao giờ", "Hoàn toàn không", "Không bao giờ", "Hoàn toàn không", "Hoàn toàn không", "Không bao giờ", "Không bao giờ", "Không bao giờ", "Hoàn toàn không", "Hoàn toàn không", "Hoàn toàn không", "Hoàn toàn không", ];
-        const permaLabelsRight = [ "Luôn luôn", "Luôn luôn", "Luôn luôn", "Luôn luôn", "Hoàn toàn có", "Luôn luôn", "Hoàn toàn có", "Hoàn toàn có", "Luôn luôn", "Luôn luôn", "Luôn luôn", "Hoàn toàn có", "Hoàn toàn có", "Hoàn toàn hài lòng", "Hoàn toàn hài lòng", ];
-        const permaMapping = { // Mapping questions (0-indexed) to PERMA dimensions (based on your original code)
-            P: [2, 8, 14], // Q3, Q9, Q15
-            E: [1, 7, 10], // Q2, Q8, Q11
-            R: [5, 11, 13], // Q6, Q12, Q14
-            M: [4, 6, 12], // Q5, Q7, Q13
-            A: [0, 3, 9], // Q1, Q4, Q10
+
+        const permaQuestions   = permaItems.map(i => i.q);
+        const permaLabelsLeft  = permaItems.map(i => i.left);
+        const permaLabelsRight = permaItems.map(i => i.right);
+
+        const permaMapping = {
+            P: [2, 12, 21],
+            E: [1, 9, 16],
+            R: [7, 18, 20],
+            M: [6, 8, 19],
+            A: [0, 4, 14],
+            N: [3, 13, 15],
+            H: [5, 11, 17],
+            L: [10],
+            HAPPY: [22]
         };
 
         const ghq12Questions = [
-            "Bạn có cảm thấy luôn khoẻ mạnh không?", // Ngược
-            "Bạn có cảm thấy cần thêm chút thuốc ngủ không?",
-            "Bạn có cảm thấy luôn bị căng thẳng không?",
-            "Bạn có cảm thấy không thể vượt qua những khó khăn của mình không?",
-            "Bạn có cảm thấy không thể tập trung được khi làm việc không?",
-            "Bạn có cảm thấy hay quên hơn thường lệ không?",
-            "Bạn có cảm thấy cuộc sống hàng ngày thật vô ích không?", // Ngược
-            "Bạn có cảm thấy mình không có khả năng quyết định mọi việc không?",
-            "Bạn có cảm thấy mình không được hưởng những hoạt động thường ngày của bạn không?", // Ngược
-            "Bạn có cảm thấy mình không có khả năng đối diện với các khó khăn của mình không?",
-            "Bạn có cảm thấy hay lo lắng và khó ngủ không?",
-            "Bạn có cảm thấy luôn có thể làm mọi việc hiệu quả không?", // Ngược
+            { q: "Gần đây bạn có thể tập trung vào bất cứ việc gì mà mình đang làm?", 
+                labels: ["Tốt hơn bình thường","Như bình thường","Kém hơn bình thường","Kém hơn rất nhiều so với bình thường"] },
+            { q: "Gần đây bạn có mất ngủ nhiều vì lo lắng?",
+                labels: ["Không mất ngủ","Không nhiều hơn bình thường","Hơn một chút so với bình thường","Hơn nhiều so với bình thường"] },
+            { q: "Gần đây bạn cảm thấy mình đóng vai trò hữu ích trong những việc bạn tham gia vào?",
+                labels: ["Nhiều hơn bình thường","Như bình thường","Ít hơn bình thường","Ít hơn hẳn bình thường"] },
+            { q: "Gần đây bạn thấy mình có khả năng đưa ra quyết định trong mọi việc?",
+                labels: ["Nhiều hơn bình thường","Như bình thường","Ít hơn bình thường","Ít hơn hẳn bình thường"] },
+            { q: "Gần đây bạn có luôn cảm thấy căng thẳng?",
+                labels: ["Không căng thẳng","Không nhiều hơn bình thường","Nhiều hơn đôi chút so với bình thường","Nhiều hơn hẳn so với bình thường"] },
+            { q: "Gần đây bạn có thường có cảm giác không thể vượt qua những khó khăn của mình?",
+                labels: ["Không có cảm giác này","Không nhiều hơn bình thường","Nhiều hơn bình thường","Nhiều hơn hẳn so với bình thường"] },
+            { q: "Gần đây bạn có thể tìm thấy niềm vui trong những hoạt động thường ngày?",
+                labels: ["Nhiều hơn bình thường","Như bình thường","Ít hơn bình thường","Ít hơn hẳn bình thường"] },
+            { q: "Gần đây bạn có thể đương đầu với những vấn đề của mình?",
+                labels: ["Tốt hơn bình thường","Như bình thường","Kém hơn bình thường","Kém hơn hẳn bình thường"] },
+            { q: "Gần đây bạn có thường cảm thấy bất hạnh và muộn phiền?",
+                labels: ["Không chút nào","Như bình thường","Nhiều hơn đôi chút so với bình thường","Nhiều hơn hẳn so với bình thường"] },
+            { q: "Gần đây bạn có thường cảm thấy mất sự tự tin vào chính mình?",
+                labels: ["Không chút nào","Không nhiều hơn bình thường","Nhiều hơn đôi chút so với bình thường","Nhiều hơn hẳn so với bình thường"] },
+            { q: "Gần đây bạn có thường cho rằng mình là một người không có giá trị?",
+                labels: ["Không chút nào","Như bình thường","Nhiều hơn đôi chút so với bình thường","Nhiều hơn hẳn so với bình thường"] },
+            { q: "Gần đây bạn có thường thấy rằng mình có lý do để hạnh phúc, sau khi cân nhắc tất cả mọi khía cạnh của cuộc sống?",
+                labels: ["Nhiều hơn bình thường","Gần như bình thường","Ít hơn bình thường","Ít hơn hẳn bình thường"] }
         ];
-        const ghq12Labels = ["Hoàn toàn không", "Ít hơn thường lệ", "Giống như thường lệ", "Nhiều hơn thường lệ"];
-        const ghq12ReverseScored = [0, 6, 8, 11]; // Indices of questions that are reverse scored (0-indexed)
 
         const dass21Questions = [
-            "Tôi thấy mình khó mà bình tĩnh lại được", // S1
-            "Tôi thấy khô miệng", // A1
-            "Tôi không còn cảm thấy tích cực nào cả", // D1
-            "Tôi cảm thấy khó thở (ví dụ: thở gấp, hụt hơi dù không gắng sức)", // A2
-            "Tôi thấy mình khó mà bắt đầu chuyển động được", // D2
-            "Tôi có xu hướng phản ứng thái quá trước những tình huống khó khăn", // S2
-            "Tôi thấy mình run rẩy", // A3
-            "Tôi thấy mình tiêu hao rất nhiều năng lượng lo lắng", // S3
-            "Tôi thấy buồn và chán nản", // D3
-            "Tôi biết mình sẽ lo âu", // A4
-            "Tôi không thấy hứng thú với bất cứ điều gì", // D4
-            "Tôi thấy mình bồn chồn không yên", // S4
-            "Tôi thấy khó thư giãn", // A5
-            "Tôi thấy mình chán nản và vô vọng", // D5
-            "Tôi lo lắng dễ dàng", // A6
-            "Tôi thấy mình không xứng đáng gì cả", // D6
-            "Tôi cảm thấy dễ bị xúc phạm", // S5
-            "Tôi thấy mình gần như hoảng loạn", // A7
-            "Tôi thấy mình không còn yêu thích bất cứ điều gì", // D7
-            "Tôi thấy hơi lo lắng khi phải đối mặt với một tình huống có thể làm mình hoảng loạn", // S6
-            "Tôi thấy hơi đổ mồ hôi (ví dụ: mồ hôi tay) mặc dù trời không nóng bức", // S7
-        ];
+            "Tôi thấy mình “căng như dây đàn”, khó để thả lỏng",          // S1
+            "Tôi cảm thấy bị khô miệng",                                   // A1
+            "Tôi dường như không thể cảm nhận bất kỳ cảm xúc tích cực nào",// D1
+            "Tôi thấy khó thở (thở nhanh quá mức, thở khó khăn kể cả khi không làm gì gắng sức cả)", // A2
+            "Tôi thấy khó bắt tay vào việc",                               // D2
+            "Tôi có xu hướng phản ứng thái quá trong các tình huống",      // S2
+            "Tôi thấy mình bị run (ví dụ như run tay…)",                    // A3
+            "Tôi cảm thấy mình tiêu tốn rất nhiều năng lượng cho việc lo lắng", // S3
+            "Tôi lo lắng về những tình huống có thể khiến tôi hoảng loạn và trở nên ngớ ngẩn", // A4
+            "Tôi thấy mình chẳng có gì để mong đợi",                        // D3
+            "Tôi thấy mình bực bội, cáu kỉnh",                              // S4
+            "Tôi cảm thấy khó thư giãn",                                    // S5 (giữ chung thang S)
+            "Tôi cảm thấy hơi buồn chán",                                   // D4
+            "Tôi không thể chịu được khi có điều gì đó ngăn cản tôi tiếp tục việc đang làm", // S6
+            "Tôi cảm thấy mình gần như hoảng loạn",                         // A5
+            "Tôi không thể có hứng thú với bất kỳ điều gì",                 // D5
+            "Tôi thấy mình chẳng đáng làm người",                           // D6
+            "Tôi cảm thấy mình dễ tự ái",                                   // S7
+            "Tôi thấy tim mình đập nhanh, loạn nhịp khi không gắng sức",    // A6
+            "Tôi thấy sợ hãi vô cớ",                                        // A7
+            "Tôi thấy cuộc sống chẳng có ý nghĩa gì"                        // D7
+            ];
+
         // Mapping questions (0-indexed) to DASS-21 dimensions
         const dass21Mapping = {
             'Trầm cảm': [2, 4, 8, 10, 13, 15, 18], // D1-D7
-            'Lo âu': [1, 3, 6, 9, 12, 14, 17], // A1-A7
-            'Stress': [0, 5, 7, 11, 16, 19, 20], // S1-S7
+            'Lo âu':    [1, 3, 6, 9, 12, 14, 17], // A1-A7
+            'Stress':   [0, 5, 7, 11, 16, 19, 20], // S1-S7
         };
-        const dass21Labels = ["Không đúng chút nào", "Đúng 1 phần", "Đúng phần lớn thời gian", "Hoàn toàn đúng"];
-
+        const dass21Labels = ["Không đúng chút nào", "Đúng một phần", "Đúng phần lớn thời gian", "Hoàn toàn đúng"];
 
         // --- Interpretation Data (from Manual) ---
 
@@ -609,7 +1003,6 @@
             risk: "Có nguy cơ gặp rối loạn sức khỏe tinh thần. Hãy cân nhắc tìm kiếm sự hỗ trợ từ chuyên gia tâm lý để cải thiện mức độ hạnh phúc và sức khỏe tinh thần tổng thể.", // < 5.0
         };
 
-        // DASS-21 Interpretation (from Manual)
         const dass21InterpretationRanges = {
             'Trầm cảm': [{ max: 4, level: 'Bình thường' }, { max: 6, level: 'Nhẹ' }, { max: 10, level: 'Vừa' }, { max: 13, level: 'Nặng' }, { max: Infinity, level: 'Rất nặng' }],
             'Lo âu': [{ max: 3, level: 'Bình thường' }, { max: 5, level: 'Nhẹ' }, { max: 7, level: 'Vừa' }, { max: 9, level: 'Nặng' }, { max: Infinity, level: 'Rất nặng' }],
@@ -632,39 +1025,154 @@
         let permaChart = null; 
         let allResults = {}; 
 
-        function openTab(evt, tabName) {
-            let tabContents = document.querySelectorAll('.tab-content');
-            tabContents.forEach(content => content.classList.remove('active'));
-            let tabButtons = document.querySelectorAll('.tab-button');
-            tabButtons.forEach(button => button.classList.remove('active'));
-            document.getElementById(tabName).classList.add('active');
-            evt.currentTarget.classList.add('active');
-            if (tabName === 'results') {
-                displayAllResults();
-            } else {
-                document.getElementById('perma-chart-container').style.display = 'none';
-            }
+        // ===== CONSENT LOCK =====
+        function getTabIdFromButton(btn){
+            // lấy id tab từ onclick='openTab(event, "xxx")' hoặc data-tab
+            const m = btn.getAttribute('onclick')?.match(/'([^']+)'/);
+            return (m && m[1]) || btn.dataset.tab || '';
         }
 
+        // áp trạng thái khoá cho các tab ở thanh trên
+        function applyConsentLock() {
+            const agreed = !!document.getElementById('consent-agree')?.checked;
+            document.querySelectorAll('.tabs .tab-button').forEach(btn => {
+                    const tabId = getTabIdFromButton(btn);
+                    if (tabId && tabId !== 'consent') {
+                    btn.classList.toggle('locked', !agreed);
+                    }
+                });
+        }
+
+        // bọc openTab để CHẶN chuyển tab nếu chưa đồng ý
+        (function wrapOpenTab(){
+            const _openTab = window.openTab;
+            window.openTab = function(evt, tabName){
+                if (tabName !== 'consent') {
+                const agreed = !!document.getElementById('consent-agree')?.checked;
+                if (!agreed) {
+                    alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
+                    return;
+                }
+                }
+                _openTab(evt, tabName);
+            };
+        })();
+
+        // khi trang tải xong: khoá tab + gắn listener cho checkbox
+        document.addEventListener('DOMContentLoaded', () => {
+        // lần đầu khoá hết trừ consent
+        applyConsentLock();
+
+        // đổi trạng thái khoá khi tick/untick
+        const cb = document.getElementById('consent-agree');
+        if (cb) cb.addEventListener('change', applyConsentLock);
+        });
+
+        function goToDemographics() {
+        const agree = document.getElementById('consent-agree');
+        if (!agree || !agree.checked) {
+            alert("Vui lòng đọc và tích vào ô 'Tôi đồng ý tham gia nghiên cứu này' trước khi tiếp tục.");
+            return;
+        }
+        // đã đồng ý => mở khoá tab và đi tiếp
+        applyConsentLock();
+        goToTab('demographics'); // dùng click nút tab có sẵn
+        }
+
+        document.querySelectorAll('input[name="demo-gender"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                const otherInput = document.getElementById('demo-gender-other');
+                if (this.value === 'Khác') {
+                    otherInput.style.display = 'block';
+                } else {
+                    otherInput.style.display = 'none';
+                    otherInput.value = ''; // xóa nội dung nếu không chọn Khác
+                }
+            });
+        });
+        let gender = document.querySelector('input[name="demo-gender"]:checked')?.value || '';
+        if (gender === 'Khác') {
+            const otherValue = document.getElementById('demo-gender-other').value.trim();
+            if (otherValue) {
+                gender += `${otherValue}`;
+            }
+        }
+        // ====== HELPERS ======
+        function bindRadioDetailGroup(groupName, detailInputId, questionLabel) {
+            const detail = document.getElementById(detailInputId);
+            if (!detail) return;
+
+            function update() {
+                const val = document.querySelector(`input[name="${groupName}"]:checked`)?.value || '';
+                const show = (val === 'Có');
+                detail.style.display = show ? 'inline-block' : 'none';
+                detail.required = show;
+                detail.setCustomValidity('');
+
+                // Nếu chọn “Có” mà chưa nhập → đặt thông báo required cho HTML5
+                if (show && !detail.value.trim()) {
+                detail.setCustomValidity(`Vui lòng ghi rõ ở câu ${questionLabel}.`);
+                }
+                if (!show && detail.value) detail.value = ''; // dọn rác khi chuyển về “Không”
+            }
+
+        // lắng nghe thay đổi radio + input
+            document.querySelectorAll(`input[name="${groupName}"]`).forEach(r => r.addEventListener('change', update));
+            detail.addEventListener('input', update);
+
+            update(); // chạy lần đầu
+            }
+
+            document.addEventListener('DOMContentLoaded', () => {
+            bindRadioDetailGroup('demo-religion', 'demo-religion-detail', '8 (Tôn giáo)');
+            bindRadioDetailGroup('demo-physical', 'demo-physical-detail', '9 (Sức khỏe thể chất)');
+            bindRadioDetailGroup('demo-psych', 'demo-psych-detail', '10 (Tiền sử/điều trị SHTT)');
+        });
+
+        function openTab(evt, tabName) {
+            document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+            document.querySelectorAll('.tab-button').forEach(b => b.classList.remove('active'));
+            document.getElementById(tabName).classList.add('active');
+            evt.currentTarget.classList.add('active');
+
+            const chartBox = document.getElementById('perma-chart-container');
+            if (tabName === 'results') {
+                const resultsDiv = document.getElementById('results-content');
+                resultsDiv.innerHTML = '<p class="completion-message">Nhấn "Tính điểm & Xem kết quả" để xem kết quả từ hệ thống.</p>';
+                if (chartBox) chartBox.style.display = 'none';
+                if (permaChart) { permaChart.destroy(); permaChart = null; }
+            } else {
+                if (chartBox) chartBox.style.display = 'none';
+                if (permaChart) { permaChart.destroy(); permaChart = null; }
+            }
+        }
         function renderQuestions(containerId, questions, labels, scaleType = '0-10', reverseScored = []) {
             const container = document.getElementById(containerId);
             container.innerHTML = ''; 
             const optionsHtml = (scaleType) => {
-                let html = '';
-                let values = [];
-                if (scaleType === '0-10') {
-                    values = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
-                } else if (scaleType === '0-3') {
-                    values = [0, 1, 2, 3];
-                }
-                html = values.map(value => `<div class="option" data-value="${value}">${value}</div>`).join('');
-                return html;
+                const values = (scaleType === '0-10') ? [...Array(11).keys()] : [0,1,2,3];
+                return values.map(v => `<div class="option" data-value="${v}">${v}</div>`).join('');
             };
-            const labelHtml = (scaleType, index, labels) => {
-                if (scaleType === '0-10') {
-                    return `<div class="label scale-${scaleType}"><span class="left">${labels[index*2]}</span><span class="right">${labels[index*2 + 1]}</span></div>`;
-                } else if (scaleType === '0-3') {
-                    return `<div class="label scale-${scaleType}"><span>${labels[0]}</span><span>${labels[1]}</span><span>${labels[2]}</span><span>${labels[3]}</span></div>`;
+            const labelHtml = (scale, index, labelsArg) => {
+                if (scale === '0-10') {
+                    const hasSides = labelsArg && typeof labelsArg === 'object' && 'left' in labelsArg && 'right' in labelsArg;
+                    const leftText  = hasSides ? labelsArg.left[index]  : labelsArg?.[index * 2];
+                    const rightText = hasSides ? labelsArg.right[index] : labelsArg?.[index * 2 + 1];
+                    return `
+                    <div class="label scale-${scale}">
+                        <span class="left">${leftText ?? ''}</span>
+                        <span class="right">${rightText ?? ''}</span>
+                    </div>`;
+                } else if (scale === '0-3') {
+                    // labelsArg có thể là MẢNG 4 phần tử (cũ) hoặc MẢNG-OF-MẢNGS theo từng câu (mới)
+                    const L = Array.isArray(labelsArg?.[index]) ? labelsArg[index] : labelsArg;
+                    return `
+                    <div class="label scale-${scale}">
+                        <span>${L?.[0] ?? ''}</span>
+                        <span>${L?.[1] ?? ''}</span>
+                        <span>${L?.[2] ?? ''}</span>
+                        <span>${L?.[3] ?? ''}</span>
+                    </div>`;
                 }
                 return '';
             };
@@ -708,53 +1216,451 @@
             return selectedValue !== null ? parseInt(selectedValue) : null;
         }
 
-        function calculateAllScores() {
-            const resultsContentDiv = document.getElementById('results-content');
-            resultsContentDiv.innerHTML = ''; 
-            const name = document.getElementById('name').value || 'Người dùng';
-            const date = document.getElementById('date').value || new Date().toLocaleDateString();
-            allResults = { name: name, date: date, perma: null, ghq12: null, dass21: null };
-            const permaScores = calculatePERMAScores();
-            if (permaScores) {
-                allResults.perma = permaScores;
+        function getLocalDateGMT7() {
+            const now = new Date();
+            const gmt7 = new Date(now.getTime() + (7 * 60 - now.getTimezoneOffset()) * 60 * 1000);
+            const day = gmt7.getDate().toString().padStart(2, '0');
+            const month = (gmt7.getMonth() + 1).toString().padStart(2, '0');
+            const year = gmt7.getFullYear();
+            return `${day}-${month}-${year}`;
+        }
+
+        function loadAndDisplaySavedResults() {
+            const savedResults = localStorage.getItem('latestAssessmentResults');
+            if (savedResults) {
+                const results = JSON.parse(savedResults);
+                displayAllResults(results);
             } else {
-                resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test PERMA Profiler.</p>';
-            }
-            const ghq12Scores = calculateGHQ12Scores();
-            if (ghq12Scores !== null) {
-                allResults.ghq12 = ghq12Scores;
-            } else {
-                resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test GHQ-12.</p>';
-            }
-            const dass21Scores = calculateDASS21Scores();
-            if (dass21Scores !== null) {
-                allResults.dass21 = dass21Scores;
-            } else {
-                resultsContentDiv.innerHTML += '<p class="unanswered-message">Vui lòng hoàn thành bài test DASS-21.</p>';
-            }
-            if (allResults.perma || allResults.ghq12 || allResults.dass21) {
-                saveResults(allResults);
-                displayAllResults(allResults); 
-                // Append to Google Sheets after displaying
-                const rowData = [
-                    name, date,
-                    allResults.perma ? allResults.perma.dimensionScores.P.toFixed(2) : '',
-                    allResults.perma ? allResults.perma.dimensionScores.E.toFixed(2) : '',
-                    allResults.perma ? allResults.perma.dimensionScores.R.toFixed(2) : '',
-                    allResults.perma ? allResults.perma.dimensionScores.M.toFixed(2) : '',
-                    allResults.perma ? allResults.perma.dimensionScores.A.toFixed(2) : '',
-                    allResults.perma ? allResults.perma.happinessScore : '',
-                    allResults.perma ? allResults.perma.totalPermaAverage.toFixed(2) : '',
-                    allResults.ghq12 ? allResults.ghq12.totalScore : '',
-                    allResults.dass21 ? allResults.dass21['Trầm cảm'] : '',
-                    allResults.dass21 ? allResults.dass21['Lo âu'] : '',
-                    allResults.dass21 ? allResults.dass21['Stress'] : '',
-                ];
-                appendResultsToSheet(rowData); // Call the Sheets function
-            } else {
-                resultsContentDiv.innerHTML = '<p class="unanswered-message">Vui lòng hoàn thành ít nhất một bài test để xem kết quả.</p>';
+                const resultsContentDiv = document.getElementById('results-content');
+                resultsContentDiv.innerHTML  = '<p class="completion-message">Chưa có kết quả nào được lưu. Vui lòng hoàn thành các bài test và bấm "Tính điểm & Xem kết quả".</p>';
+                document.getElementById('perma-chart-container').style.display = 'none';
+                if (permaChart) {
+                    permaChart.destroy();
+                    permaChart = null;
+                }
             }
         }
+        
+        // --- Demographic Logic ---
+        function requireText(id, label, { pattern=null, min=0, max=Infinity } = {}) {
+            const el = document.getElementById(id);
+            const val = (el?.value || '').trim();
+            el?.classList.remove('invalid');
+
+            if (!val) {
+                el?.classList.add('invalid');
+                alert(`Vui lòng nhập ${label}.`);
+                el?.scrollIntoView({behavior:'smooth', block:'center'});
+                el?.focus();
+                return null;
+            }
+            if (pattern && !pattern.test(val)) {
+                el?.classList.add('invalid');
+                alert(`${label} không hợp lệ.`);
+                el?.scrollIntoView({behavior:'smooth', block:'center'});
+                el?.focus();
+                return null;
+            }
+            const num = Number(val);
+            if (Number.isFinite(num) && (num < min || num > max)) {
+                el?.classList.add('invalid');
+                alert(`${label} không hợp lệ.`);
+                el?.scrollIntoView({behavior:'smooth', block:'center'});
+                el?.focus();
+                return null;
+            }
+            return val;
+        }
+
+        function requireSelect(id, label) {
+            const el = document.getElementById(id);
+            el?.classList.remove('invalid');
+            const val = (el?.value || '').trim();
+            if (!val) {
+                el?.classList.add('invalid');
+                alert(`Vui lòng chọn ${label}.`);
+                el?.scrollIntoView({behavior:'smooth', block:'center'});
+                el?.focus();
+                return null;
+            }
+            return val;
+        }
+
+        function requireRadio(name, label, containerSelector) {
+            const selected = document.querySelector(`input[name="${name}"]:checked`);
+            // clear
+            document.querySelector(containerSelector || '')?.classList?.remove('group-invalid');
+
+            if (!selected) {
+                if (containerSelector) document.querySelector(containerSelector)?.classList?.add('group-invalid');
+                alert(`Vui lòng chọn ${label}.`);
+                document.querySelector(containerSelector || `input[name="${name}"]`)?.scrollIntoView({behavior:'smooth', block:'center'});
+                return null;
+            }
+            return selected.value;
+        }
+
+        const DEMO_KEY = 'mh_demographics_v2';
+        function collectDemographicsFromDOM() {
+            // 1) Năm sinh (4 số, 1900..năm hiện tại)
+            const yearNow = new Date().getFullYear();
+            const yob = requireText('demo-yob', 'Năm sinh', { pattern:/^\d{4}$/, min:1900, max:yearNow });
+            if (yob === null) return null;
+
+            // 2) Giới tính (+ chi tiết nếu Khác)
+            const genderVal = requireRadio('demo-gender', 'Giới tính', '#demographics .q:nth-of-type(2)');
+            if (genderVal === null) return null;
+            let gender = genderVal;
+            if (genderVal === 'Khác') {
+                const other = requireText('demo-gender-other', 'giới tính (ghi rõ)');
+                if (other === null) return null;
+                gender = `Khác - ${other}`;
+            }
+
+            // 3) Học vấn
+            const edu = requireSelect('demo-edu', 'trình độ học vấn');
+            if (edu === null) return null;
+
+            // 4) Việc làm
+            const employ = requireSelect('demo-employ', 'tình trạng việc làm');
+            if (employ === null) return null;
+
+            // 5) Hôn nhân
+            const marital = requireSelect('demo-marital', 'tình trạng hôn nhân');
+            if (marital === null) return null;
+
+            // 6) Thu nhập
+            const income = requireRadio('demo-income', 'mức thu nhập', '#demographics .q.full');
+            if (income === null) return null;
+
+            // 7) Khu vực sống  ← vấn đề bạn nêu
+            const area = requireRadio('demo-area', 'khu vực sống', '#demographics .q:nth-of-type(7)');
+            if (area === null) return null;
+
+            // 8) Tôn giáo (+ chi tiết nếu Có)
+            const religion = requireRadio('demo-religion', 'tôn giáo', '#demographics .q:nth-of-type(8)');
+            if (religion === null) return null;
+            let religion_detail = '';
+            if (religion === 'Có') {
+                const det = requireText('demo-religion-detail', 'tôn giáo (ghi rõ)');
+                if (det === null) return null;
+                religion_detail = det;
+            }
+
+            // 9) Vấn đề thể chất (+ chi tiết nếu Có)
+            const physical = requireRadio('demo-physical', 'vấn đề sức khỏe thể chất', '#demographics .q:nth-of-type(9)');
+            if (physical === null) return null;
+            let physical_detail = '';
+            if (physical === 'Có') {
+                const det = requireText('demo-physical-detail', 'vấn đề thể chất (ghi rõ)');
+                if (det === null) return null;
+                physical_detail = det;
+            }
+
+            // 10) Tiền sử/điều trị rối loạn SHTT (+ chi tiết nếu Có)
+            const psych = requireRadio('demo-psych', 'tiền sử/điều trị rối loạn SHTT', '#demographics .q:nth-of-type(10)');
+            if (psych === null) return null;
+            let psych_detail = '';
+            if (psych === 'Có') {
+                const det = requireText('demo-psych-detail', 'tiền sử/điều trị (ghi rõ)');
+                if (det === null) return null;
+                psych_detail = det;
+            }
+
+            // Lưu local (tuỳ chọn)
+            const demo = { yob, gender, edu, employ, marital, income, area,
+                            religion, religion_detail, physical, physical_detail, psych, psych_detail };
+            localStorage.setItem('mh_demographics_v2', JSON.stringify({ ...demo, saved_at:new Date().toISOString() }));
+            return demo;
+        }
+
+        function buildGeneralRow({ name, date, timeStr, perma, ghq12, dass21 }) {
+            const n2 = v =>
+                (typeof v === 'number' && isFinite(v)) ? +v.toFixed(2) : '';
+
+            const P = perma?.dimensionScores ? n2(perma.dimensionScores.P) : '';
+            const E = perma?.dimensionScores ? n2(perma.dimensionScores.E) : '';
+            const R = perma?.dimensionScores ? n2(perma.dimensionScores.R) : '';
+            const M = perma?.dimensionScores ? n2(perma.dimensionScores.M) : '';
+            const A = perma?.dimensionScores ? n2(perma.dimensionScores.A) : '';
+            const permaTotal = perma ? n2(perma.totalPermaAverage) : '';
+
+            const ghqTotal = (typeof ghq12?.totalScore === 'number') ? ghq12.totalScore : '';
+            const dDep    = (typeof dass21?.['Trầm cảm'] === 'number') ? dass21['Trầm cảm'] : '';
+            const dAnx    = (typeof dass21?.['Lo âu']   === 'number') ? dass21['Lo âu']   : '';
+            const dStress = (typeof dass21?.['Stress']  === 'number') ? dass21['Stress']  : '';
+
+            return [name||'', date||'', timeStr||'', P,E,R,M,A, permaTotal, ghqTotal, dDep, dAnx, dStress];
+        }
+
+
+        function valRadio(name) {
+            const el = document.querySelector(`input[name="${name}"]:checked`);
+            return el ? el.value : '';
+        }
+
+        function showOnChecked(radioId, inputId) {
+            const r = document.getElementById(radioId);
+            const t = document.getElementById(inputId);
+            if (!r || !t) return;
+            r.addEventListener('change', () => { t.style.display = r.checked ? 'inline-block' : 'none'; if (!r.checked) t.value = ''; });
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            // Hiện/ẩn ô chi tiết
+            const genderOtherRadio = document.getElementById('demo-gender-other-radio');
+            const genderOtherInput = document.getElementById('demo-gender-other');
+            if (genderOtherRadio && genderOtherInput) {
+            document.querySelectorAll('input[name="demo-gender"]').forEach(el => {
+                el.addEventListener('change', () => {
+                const isOther = genderOtherRadio.checked;
+                genderOtherInput.style.display = isOther ? 'inline-block' : 'none';
+                if (!isOther) genderOtherInput.value = '';
+                });
+            });
+            }
+            showOnChecked('demo-rel-yes', 'demo-religion-detail');
+            showOnChecked('demo-phy-yes', 'demo-physical-detail');
+            showOnChecked('demo-psy-yes', 'demo-psych-detail');
+
+            // Nút Lưu & Next
+            const btn = document.getElementById('demo-save-next');
+            if (btn) {
+            btn.addEventListener('click', () => {
+                // Thu thập
+                const yob = (document.getElementById('demo-yob')?.value || '').trim();
+                let gender = valRadio('demo-gender');
+                if (gender === 'Khác') gender = (document.getElementById('demo-gender-other')?.value || 'Khác').trim();
+
+                const edu    = document.getElementById('demo-edu')?.value || '';
+                const employ = document.getElementById('demo-employ')?.value || '';
+                const marital= document.getElementById('demo-marital')?.value || '';
+                const income = valRadio('demo-income');
+                const area   = valRadio('demo-area');
+
+                const religion = valRadio('demo-religion');
+                const religion_detail = religion === 'Có' ? (document.getElementById('demo-religion-detail')?.value || '').trim() : '';
+
+                const physical = valRadio('demo-physical');
+                const physical_detail = physical === 'Có' ? (document.getElementById('demo-physical-detail')?.value || '').trim() : '';
+
+                const psych = valRadio('demo-psych');
+                const psych_detail = psych === 'Có' ? (document.getElementById('demo-psych-detail')?.value || '').trim() : '';
+
+                // Validate nhẹ Năm sinh
+                if (yob && !/^\d{4}$/.test(yob)) { alert('Năm sinh phải là 4 chữ số (vd 1995).'); return; }
+                const y = parseInt(yob, 10);
+                if (yob && (y < 1900 || y > new Date().getFullYear())) { alert('Năm sinh không hợp lệ.'); return; }
+
+                const demo = {
+                yob, gender, edu, employ, marital, income, area,
+                religion, religion_detail,
+                physical, physical_detail,
+                psych, psych_detail,
+                saved_at: new Date().toISOString()
+                };
+                localStorage.setItem(DEMO_KEY, JSON.stringify(demo));
+                goToTab('perma');
+            });
+            }
+
+            // Tự động nạp lại nếu có lưu trước đó
+            try {
+            const saved = JSON.parse(localStorage.getItem(DEMO_KEY) || '{}');
+            if (saved && Object.keys(saved).length) {
+                document.getElementById('demo-yob') && (document.getElementById('demo-yob').value = saved.yob || '');
+
+                if (saved.gender) {
+                const g = Array.from(document.querySelectorAll('input[name="demo-gender"]'))
+                    .find(x => x.value.toLowerCase() === saved.gender.toLowerCase());
+                if (g) g.checked = true;
+                else {
+                    document.getElementById('demo-gender-other-radio').checked = true;
+                    const ip = document.getElementById('demo-gender-other');
+                    ip.style.display = 'inline-block'; ip.value = saved.gender;
+                }
+                }
+                document.getElementById('demo-edu') && (document.getElementById('demo-edu').value = saved.edu || '');
+                document.getElementById('demo-employ') && (document.getElementById('demo-employ').value = saved.employ || '');
+                document.getElementById('demo-marital') && (document.getElementById('demo-marital').value = saved.marital || '');
+
+                if (saved.income) {
+                const el = document.querySelector(`input[name="demo-income"][value="${saved.income}"]`); el && (el.checked = true);
+                }
+                if (saved.area) {
+                const el = document.querySelector(`input[name="demo-area"][value="${saved.area}"]`); el && (el.checked = true);
+                }
+
+                if (saved.religion) {
+                const el = document.querySelector(`input[name="demo-religion"][value="${saved.religion}"]`); el && (el.checked = true);
+                if (saved.religion === 'Có') {
+                    const ip = document.getElementById('demo-religion-detail'); ip.style.display = 'inline-block'; ip.value = saved.religion_detail || '';
+                }
+                }
+                if (saved.physical) {
+                const el = document.querySelector(`input[name="demo-physical"][value="${saved.physical}"]`); el && (el.checked = true);
+                if (saved.physical === 'Có') {
+                    const ip = document.getElementById('demo-physical-detail'); ip.style.display = 'inline-block'; ip.value = saved.physical_detail || '';
+                }
+                }
+                if (saved.psych) {
+                const el = document.querySelector(`input[name="demo-psych"][value="${saved.psych}"]`); el && (el.checked = true);
+                if (saved.psych === 'Có') {
+                    const ip = document.getElementById('demo-psych-detail'); ip.style.display = 'inline-block'; ip.value = saved.psych_detail || '';
+                }
+                }
+            }
+            } catch(_) {}
+        });
+
+
+        async function calculateAllScores() {
+            const resultsContentDiv = document.getElementById('results-content');
+            resultsContentDiv.innerHTML = '';
+
+            // 🔒 BẮT BUỘC LÀM ĐỦ 3 BÀI (100% câu)
+            const missing = [];
+
+
+            // PERMA: 15 câu
+            for (let i = 0; i < permaQuestions.length; i++) {
+                if (getSelectedScore('perma-questions', i) === null) { missing.push('PERMA'); break; }
+            }
+            // GHQ-12: 12 câu
+            for (let i = 0; i < ghq12Questions.length; i++) {
+                if (getSelectedScore('ghq12-questions', i) === null) { missing.push('GHQ-12'); break; }
+            }
+            // DASS-21: 21 câu
+            for (let i = 0; i < dass21Questions.length; i++) {
+                if (getSelectedScore('dass21-questions', i) === null) { missing.push('DASS-21'); break; }
+            }
+
+            if (missing.length > 0) {
+                resultsContentDiv.innerHTML =
+                `<p class="unanswered-message">Vui lòng hoàn thành đầy đủ: ${missing.join(', ')} trước khi xem kết quả.</p>`;
+                const chartBox = document.getElementById('perma-chart-container');
+                if (chartBox) chartBox.style.display = 'none';
+                if (typeof permaChart !== 'undefined' && permaChart) { permaChart.destroy(); permaChart = null; }
+                return; // ⛔ dừng hẳn
+            }
+
+            // ĐỦ 3 BÀI → tính điểm
+            const name = document.getElementById('name').value || 'Người dùng';
+            const date = document.getElementById('date').value || getLocalDateGMT7();
+            allResults = { name, date, perma: null, ghq12: null, dass21: null };
+
+            const permaScores = calculatePERMAScores();
+            const ghq12Scores = calculateGHQ12Scores();
+            const dass21Scores = calculateDASS21Scores();
+
+            allResults.perma  = permaScores;
+            allResults.ghq12  = ghq12Scores;
+            allResults.dass21 = dass21Scores;
+
+            // Hiển thị + (tuỳ chọn) lưu localStorage
+
+
+            // ==== Chuẩn bị dữ liệu gửi 4 sheet ====
+            const now = new Date();
+            const hh = String(now.getHours()).padStart(2,'0');
+            const mm = String(now.getMinutes()).padStart(2,'0');
+            const ss = String(now.getSeconds()).padStart(2,'0');
+            const timeStr = `${hh}:${mm}:${ss}`;
+
+              // LẤY FULL đáp án theo thứ tự câu hỏi
+            const permaAnswers = Array.from({ length: permaQuestions.length }, (_, i) =>
+                getSelectedScore('perma-questions', i)
+            );
+            const ghqAnswers = Array.from({ length: ghq12Questions.length }, (_, i) =>
+                getSelectedScore('ghq12-questions', i)
+            );
+            const dassAnswers = Array.from({ length: dass21Questions.length }, (_, i) =>
+                getSelectedScore('dass21-questions', i)
+            );
+
+            // Row cho 3 sheet theo từng câu
+            const permaRow = [ name, date, timeStr, ...permaAnswers ];
+            const ghqRow   = [ name, date, timeStr, ...ghqAnswers ];
+            const dassRow  = [ name, date, timeStr, ...dassAnswers ];
+
+            const demo = collectDemographicsFromDOM();
+            if (!demo) { 
+                console.warn('Demographics chưa đầy đủ → dừng tính điểm & gửi dữ liệu.');
+                alert('Vui lòng hoàn thành đầy đủ các câu trong phần Nhân khẩu học.');
+                return;
+            }
+            // Chuẩn hoá 3 câu có “chi tiết”
+            const q8  = demo.religion === 'Có' ? `Có - ${demo.religion_detail}` : (demo.religion || '');
+            const q9  = demo.physical === 'Có' ? `Có - ${demo.physical_detail}` : (demo.physical || '');
+            const q10 = demo.psych    === 'Có' ? `Có - ${demo.psych_detail}`    : (demo.psych || '');
+
+            const demographicsRow = [
+                name, date, timeStr, 
+                demo.yob || '',
+                demo.gender || '',
+                demo.edu || '',
+                demo.employ || '',
+                demo.marital || '',
+                demo.income || '',
+                demo.area || '',
+                q8, q9, q10
+            ];
+            const DEMO_HEADERS_13 = [
+                'Họ tên','Ngày làm test','Giờ làm test',
+                'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
+                'Thu nhập','Khu vực sống','Tôn giáo','Vấn đề thể chất (Có/Không)','Tiền sử/điều trị tâm thần (Có/Không)'
+            ];
+
+            const GENERAL_HEADERS = [
+                'Họ tên','Ngày làm test','Giờ làm test',
+                'P','E','R','M','A',
+                'Điểm PERMA tổng hợp',
+                'Tổng điểm GHQ-12',
+                'Điểm Trầm cảm','Điểm Lo âu','Điểm Stress'
+                ];
+
+            // "Tổng hợp"
+            // ---- SUMMARY (General) row: ép kiểu trước rồi .toFixed() ----
+            const generalRow = buildGeneralRow({
+                name,
+                date,
+                timeStr,
+                perma: allResults.perma,
+                ghq12: allResults.ghq12,
+                dass21: allResults.dass21
+            });
+
+            // Header (tuỳ chọn): chỉ ghi nếu sheet trống
+            const headers = {
+                'Demographics':   DEMO_HEADERS_13,
+                'General':        GENERAL_HEADERS,
+                'PERMA-Profiler': ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
+                'GHQ-12':         ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
+                'DASS-21':        ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
+            };
+
+            const rowsPayload = {
+                'DASS-21'        : dassRow,
+                'Demographics'   : demographicsRow,
+                'GHQ-12'         : ghqRow,                
+                'General'        : generalRow,
+                'PERMA-Profiler' : permaRow,
+                };
+
+            console.log('SENDING payload →', rowsPayload);
+            saveResults(allResults);
+            displayAllResults(allResults);
+            // 🔗 Gửi 1 lần cho 4 sheet qua Apps Script Web App
+            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzkGO5RIvCfDGDOA3zIWyy_q-mxJsOs8lBlSpWwd_y4OTluYRiRlAKke9hIsBmG9Nk3LA/exec';
+            const sentok = await sendToAppsScript(
+                WEB_APP_URL,
+                rowsPayload,
+                headers
+                );
+            if (!sentok) {
+                console.warn('Gửi dữ liệu Google Sheets thất bại.');
+                }
+            }
 
         function calculatePERMAScores() {
             let unansweredCount = 0;
@@ -784,22 +1690,15 @@
             return { dimensionScores: dimensionScores, happinessScore: happinessScore, totalPermaAverage: totalPermaAverage };
         }
 
-        function calculateGHQ12Scores() {
-            let totalScore = 0;
-            let answeredCount = 0;
-            for (let i = 0; i < ghq12Questions.length; i++) {
-                const score = getSelectedScore('ghq12-questions', i);
-                if (score !== null) {
-                    answeredCount++;
-                    const finalScore = ghq12ReverseScored.includes(i) ? (3 - score) : score;
-                    totalScore += finalScore;
+            function calculateGHQ12Scores() {
+                let totalScore = 0;
+                for (let i = 0; i < ghq12Questions.length; i++) {
+                    const score = getSelectedScore('ghq12-questions', i);
+                    if (score === null) return null; // bắt buộc đủ 12 câu
+                    totalScore += score; // 0..3 tăng dần theo mức độ vấn đề
                 }
+                return { totalScore };
             }
-            if (answeredCount < ghq12Questions.length) {
-                return null; 
-            }
-            return { totalScore: totalScore };
-        }
 
         function calculateDASS21Scores() {
             const scores = {};
@@ -882,7 +1781,7 @@
                 noteP.innerHTML = `<em>Lưu ý: Manual cũng có diễn giải cho Cảm xúc tiêu cực, Sức khỏe, Cô đơn nhưng các mục này không nằm trong công thức tính điểm PERMA tổng và cần các câu hỏi riêng để đánh giá.</em>`;
                 permaSection.appendChild(noteP);
                 resultsContentDiv.appendChild(permaSection);
-                displayPERMAChart(results.perma.dimensionScores); 
+                displayPERMAChart(results.perma.dimensionScores, permaSection); 
             } else {
                 document.getElementById('perma-chart-container').style.display = 'none'; 
                 if (permaChart) {
@@ -997,70 +1896,67 @@
             return interpretation; 
         }
 
-        function displayPERMAChart(permaDimensionScores) {
-            const chartContainer = document.getElementById('perma-chart-container');
-            chartContainer.style.display = 'block'; 
-            const ctx = document.getElementById('perma-chart').getContext('2d');
-            if (permaChart) {
-                permaChart.destroy();
+        function displayPERMAChart(permaDimensionScores, mountSectionEl) {
+            // tạo lại container nếu mất
+            let chartContainer = document.getElementById('perma-chart-container');
+            if (!chartContainer) {
+                chartContainer = document.createElement('div');
+                chartContainer.id = 'perma-chart-container';
+                chartContainer.innerHTML = `
+                <h3>Biểu đồ PERMA</h3>
+                <canvas id="perma-chart"></canvas>
+                `;
             }
-            permaChart = new Chart(ctx, {
+
+            // 👉 Đặt biểu đồ LÊN TRÊN: ngay dưới tiêu đề h3 của phần PERMA
+            if (mountSectionEl) {
+                const h3 = mountSectionEl.querySelector('h3');
+                if (!mountSectionEl.contains(chartContainer)) {
+                if (h3) {
+                    // chèn NGAY SAU tiêu đề
+                    mountSectionEl.insertBefore(chartContainer, h3.nextSibling);
+                } else {
+                    // nếu không tìm thấy h3 thì đặt lên đầu section
+                    mountSectionEl.prepend(chartContainer);
+                }
+                } else {
+                // nếu container đã nằm trong section thì đảm bảo vị trí ngay sau h3
+                const currentParent = chartContainer.parentElement;
+                if (currentParent === mountSectionEl && h3 && chartContainer.previousElementSibling !== h3) {
+                    mountSectionEl.insertBefore(chartContainer, h3.nextSibling);
+                }
+                }
+            }
+
+            chartContainer.style.display = 'block';
+
+            // vẽ chart an toàn
+            try {
+                const ctx = chartContainer.querySelector('#perma-chart').getContext('2d');
+                if (permaChart) permaChart.destroy();
+                permaChart = new Chart(ctx, {
                 type: 'radar',
                 data: {
-                    labels: ['Cảm xúc tích cực (P)', 'Sự gắn kết (E)', 'Mối quan hệ (R)', 'Ý nghĩa (M)', 'Thành tựu (A)'],
+                    labels: ['Cảm xúc tích cực (P)','Sự gắn kết (E)','Mối quan hệ (R)','Ý nghĩa (M)','Thành tựu (A)'],
                     datasets: [{
-                        label: 'Điểm các khía cạnh PERMA',
-                        data: [permaDimensionScores.P, permaDimensionScores.E, permaDimensionScores.R, permaDimensionScores.M, permaDimensionScores.A],
-                        backgroundColor: 'rgba(74, 144, 226, 0.2)',
-                        borderColor: 'rgba(74, 144, 226, 1)',
-                        pointBackgroundColor: 'rgba(74, 144, 226, 1)',
-                        pointBorderColor: '#fff',
-                        pointHoverBackgroundColor: '#fff',
-                        pointHoverBorderColor: 'rgba(74, 144, 226, 1)'
+                    label: 'Điểm các khía cạnh PERMA',
+                    data: [permaDimensionScores.P, permaDimensionScores.E, permaDimensionScores.R, permaDimensionScores.M, permaDimensionScores.A],
+                    backgroundColor: 'rgba(74, 144, 226, 0.2)',
+                    borderColor: 'rgba(74, 144, 226, 1)',
+                    pointBackgroundColor: 'rgba(74, 144, 226, 1)',
+                    pointBorderColor: '#fff'
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
-                    scales: {
-                        r: {
-                            angleLines: { display: true },
-                            suggestedMin: 0,
-                            suggestedMax: 10,
-                            ticks: {
-                                beginAtZero: true,
-                                stepSize: 2,
-                                maxTicksLimit: 6,
-                                callback: function(value) {
-                                    if (Number.isInteger(value)) {
-                                        return value;
-                                    }
-                                }
-                            },
-                            pointLabels: {
-                                font: { size: 11 }
-                            },
-                            grid: { circular: true } 
-                        }
-                    },
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    let label = context.dataset.label || '';
-                                    if (label) label += ': ';
-                                    label += context.parsed.r.toFixed(2); 
-                                    const dimensionLetter = context.label.split(' ')[0]; 
-                                    const interpretationSpan = getPERMADimensionInterpretation(context.parsed.r, dimensionLetter);
-                                    const interpretationText = interpretationSpan.replace(/<[^>]*>/g, ''); 
-                                    return [label, interpretationText];
-                                }
-                            }
-                        }
-                    }
+                    scales: { r: { suggestedMin: 0, suggestedMax: 10, ticks: { stepSize: 2 } } },
+                    plugins: { legend: { position: 'top' } }
                 }
-            });
+                });
+            } catch (e) {
+                console.warn('Render PERMA chart failed:', e);
+            }
         }
 
         function saveResults(results) {
@@ -1074,10 +1970,59 @@
                 allResults = JSON.parse(savedResults);
                 console.log('Results loaded:', allResults);
                 document.getElementById('name').value = allResults.name || '';
-                document.getElementById('date').value = allResults.date || '';
+                document.getElementById('date').value = allResults.date || getLocalDateGMT7();
             }
         }
 
+        document.addEventListener('DOMContentLoaded', () => {
+            document.querySelectorAll('.tab-button').forEach(btn => {
+                const m = btn.getAttribute('onclick')?.match(/'([^']+)'/);
+                if (m) btn.dataset.tab = m[1];
+        });
+        });
+
+        function goToTab(tabName) {
+        const btn = document.querySelector(`.tab-button[data-tab="${tabName}"]`);
+        if (btn) btn.click();
+        }
+
+        function mountTabNav() {
+            const order = ['consent','demographics', 'perma', 'ghq12', 'dass21', 'results'];
+            const nice  = {
+                consent: "Thông tin & Đồng thuận",
+                demographics: 'Nhân khẩu học',
+                perma: 'PERMA',
+                ghq12: 'GHQ-12',
+                dass21: 'DASS-21',
+                results: 'Kết quả'
+                };            
+            order.forEach((tabId, idx) => {
+            const tabEl = document.getElementById(tabId);
+            if (!tabEl) return;
+            if (tabEl.querySelector('.tab-nav')) return;
+
+            const prevId = order[idx - 1];
+            const nextId = order[idx + 1];
+
+            const bar = document.createElement('div');
+            bar.className = 'tab-nav';
+            bar.innerHTML = `
+                <button class="nav-arrow" ${!prevId ? 'disabled' : ''}>
+                    ◀︎ <span class="nav-label">${prevId ? nice[prevId] : ''}</span>
+                </button>
+                <button class="nav-arrow ${nextId ? 'primary' : ''}" ${!nextId ? 'disabled' : ''}>
+                    <span class="nav-label">${nextId ? nice[nextId] : ''}</span> ▶︎
+                </button>
+                `;
+            tabEl.appendChild(bar);
+
+            const [prevBtn, nextBtn] = bar.querySelectorAll('.nav-arrow');
+            if (prevId) prevBtn.addEventListener('click', () => goToTab(prevId));
+            if (nextId) nextBtn.addEventListener('click', () => goToTab(nextId));
+            });
+        }
+        document.addEventListener('DOMContentLoaded', mountTabNav);
+        
         function clearData() {
             localStorage.removeItem('latestAssessmentResults');
             allResults = {}; 
@@ -1095,19 +2040,34 @@
         }
 
         document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('date').value = getLocalDateGMT7();
+            document.getElementById('date').addEventListener('blur', function() {
+                if (this.value.trim() === '') {
+                    this.value = getLocalDateGMT7();
+                }
+            });
+            
             const resultsContentDiv = document.getElementById('results-content');
             const calculateButton = document.createElement('button');
             calculateButton.textContent = 'Tính điểm & Xem kết quả';
-            calculateButton.onclick = calculateAllScores;
-            resultsContentDiv.parentNode.insertBefore(calculateButton, resultsContentDiv); 
-            renderQuestions('perma-questions', permaQuestions, permaLabelsLeft.concat(permaLabelsRight), '0-10'); 
-            renderQuestions('ghq12-questions', ghq12Questions, ghq12Labels, '0-3', ghq12ReverseScored); 
-            renderQuestions('dass21-questions', dass21Questions, dass21Labels, '0-3'); 
-            loadResults(); 
+            calculateButton.onclick = () => {
+            // chuyển tab 'results' trước
+            const btn = document.querySelector(".tab-button[onclick*='results']");
+            if (btn && !document.getElementById('results').classList.contains('active')) btn.click();
+            // đợi 1 frame cho DOM layout xong rồi mới tính
+            requestAnimationFrame(calculateAllScores);
+            };
+            resultsContentDiv.parentNode.insertBefore(calculateButton, resultsContentDiv);
+            renderQuestions('perma-questions', permaQuestions, {left: permaLabelsLeft,right: permaLabelsRight}, '0-10');
+            renderQuestions(
+                'ghq12-questions',
+                ghq12Questions.map(x => x.q),
+                ghq12Questions.map(x => x.labels),
+                '0-3'
+            );            
+            renderQuestions('dass21-questions', dass21Questions, ["Không đúng với tôi, hoặc không bao giờ xảy ra","Đúng với tôi một phần, hoặc đôi khi xảy ra","Khá đúng với tôi, hoặc thường xuyên xảy ra","Rất đúng với tôi, hoặc gần như luôn luôn xảy ra"], '0-3');
+            loadResults();
             document.querySelector('.tabs .tab-button').click();
         });
     </script>
-    <script async defer src="https://apis.google.com/js/api.js" onload="gapiLoaded()"></script>
-    <script async defer src="https://accounts.google.com/gsi/client" onload="gisLoaded()"></script>
 </body>
-</html>
