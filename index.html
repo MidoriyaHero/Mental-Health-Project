@@ -1218,12 +1218,14 @@
 
         function getLocalDateGMT7() {
             const now = new Date();
-            const gmt7 = new Date(now.getTime() + (7 * 60 - now.getTimezoneOffset()) * 60 * 1000);
-            const day = gmt7.getDate().toString().padStart(2, '0');
-            const month = (gmt7.getMonth() + 1).toString().padStart(2, '0');
-            const year = gmt7.getFullYear();
+            const utcMs = now.getTime() + now.getTimezoneOffset() * 60000; 
+            const gmt7 = new Date(utcMs + 7 * 3600000);                    
+            const day   = String(gmt7.getDate()).padStart(2, '0');
+            const month = String(gmt7.getMonth() + 1).padStart(2, '0');
+            const year  = gmt7.getFullYear();
             return `${day}-${month}-${year}`;
         }
+
 
         function loadAndDisplaySavedResults() {
             const savedResults = localStorage.getItem('latestAssessmentResults');
