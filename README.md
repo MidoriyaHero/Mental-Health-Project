@@ -7,7 +7,7 @@ Web tĩnh một file (`index.html`), deploy trên Netlify. Kết quả được 
 | Phòng khám | Link cho bệnh nhân | Google Sheet lưu kết quả |
 |---|---|---|
 | Sức khỏe tổng quát (SKTQ) | https://bsnghia-vinmec-mentalhealth.netlify.app/?clinic=sktq | [BsNghia_Mentalheath_Report_SKTQ](https://docs.google.com/spreadsheets/d/1Dzi0n5valJL0VpHz6VGWGexKMKvktnD6Yi7IYFWL-fw/edit) |
-| Tâm thần | https://bsnghia-vinmec-mentalhealth.netlify.app/?clinic=tamthan | [BsNghia_Mentalheath_Report_TamThan](https://docs.google.com/spreadsheets/d/TODO_TAMTHAN_SHEET_ID/edit) |
+| Tâm thần | https://bsnghia-vinmec-mentalhealth.netlify.app/?clinic=tamthan | [BsNghia_Mentalheath_Report_TamThan](hhttps://docs.google.com/spreadsheets/d/1gBRoGfgQmC4mhCFwsBiojuQelaRI28RPR_7Qbdibijs/edit?gid=126127484#gid=126127484) |
 | Link gốc (form cũ) | https://bsnghia-vinmec-mentalhealth.netlify.app/ | [BsNghia_Mentalheath_Report](https://docs.google.com/spreadsheets/d/1QZyVpIEeENn5k1QQdIH0AeDeHNGp9qbtzfd2TIQslkc/edit) |
 
 - Phải giữ nguyên `?clinic=...` ở cuối link. Thiếu phần này, bệnh nhân sẽ làm form cũ và dữ liệu vào file cũ.
