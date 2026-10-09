@@ -519,15 +519,26 @@
 
     .group-invalid .chips { outline: 2px solid rgba(220,53,69,.6); border-radius: 10px; }
 
+    #clinic-banner {
+        font-weight: 700;
+        color: var(--primary-color);
+        margin: 0 0 12px;
+    }
+
 </style>
 </head>
 <body>
     <h1>Công cụ Đánh giá Sức khỏe Tinh thần</h1>
     <p>Công cụ này giúp bạn tự đánh giá một số khía cạnh về sức khỏe tinh thần và hạnh phúc dựa trên các thang đo PERMA, GHQ-12 và DASS-21.</p>
 
+    <p id="clinic-banner" hidden></p>
     <div>
         <label for="name">Họ tên:</label>
         <input type="text" id="name" placeholder="Nhập họ tên của bạn">
+    </div>
+    <div id="pid-wrap" hidden>
+        <label for="pid">PID:</label>
+        <input type="text" id="pid" placeholder="Nhập PID (patient index)">
     </div>
     <div>
         <label for="date">Ngày làm test:</label>
@@ -688,7 +699,7 @@
 
             <!-- 6) Thu nhập -->
             <div class="q full">
-                <div class="q-label">6) Hãy chọn mô tả phù hợp với bạn:</div>
+                <div class="q-label" id="demo-income-label">6) Hãy chọn mô tả phù hợp với bạn:</div>
                 <div class="chips">
                 <input id="i1" type="radio" name="demo-income" value="Không đủ"><label for="i1">Thu nhập hiện tại không đủ cho các nhu cầu của tôi</label>
                 <input id="i2" type="radio" name="demo-income" value="Đủ"><label for="i2">Thu nhập hiện tại đủ cho các nhu cầu của tôi</label>
@@ -717,7 +728,7 @@
 
             <!-- 9) Thể chất -->
             <div class="q">
-                <div class="q-label">9) Bạn có đang gặp vấn đề gì về sức khỏe thể chất không?</div>
+                <div class="q-label" id="demo-physical-label">9) Bạn có đang gặp vấn đề gì về sức khỏe thể chất không?</div>
                 <div class="chips">
                 <input id="p0" type="radio" name="demo-physical" value="Không"><label for="p0">Không</label>
                 <input id="p1" type="radio" name="demo-physical" value="Có"><label for="p1">Có, vui lòng ghi rõ:</label>
@@ -881,6 +892,100 @@
     </script>
     
     <script>
+        const CLINIC_CONFIG = {
+            sktq: { label: 'Phòng khám Sức khỏe tổng quát', suffix: 'SKTQ' },
+            tamthan: { label: 'Phòng khám tâm thần', suffix: 'TamThan' },
+        };
+        const CLINIC_KEY = new URLSearchParams(location.search).get('clinic');
+        const CLINIC = CLINIC_CONFIG[CLINIC_KEY] || null;
+
+        /**
+         * Tên sheet theo phòng khám. Link công khai giữ tên gốc.
+         * @param {string} base
+         * @returns {string}
+         */
+        function sheetName(base) {
+            return CLINIC ? `${base}-${CLINIC.suffix}` : base;
+        }
+
+        /**
+         * Cột định danh đầu mỗi dòng. PID chỉ có trên link phòng khám, ngay sau họ tên.
+         * @param {string} name
+         * @param {string} date
+         * @param {string} timeStr
+         * @returns {string[]}
+         */
+        function identityColumns(name, date, timeStr) {
+            const cols = [name || ''];
+            if (CLINIC) cols.push((document.getElementById('pid')?.value || '').trim());
+            cols.push(date || '', timeStr || '');
+            return cols;
+        }
+
+        /**
+         * Đổi câu nhân khẩu học và hiện PID khi URL là link phòng khám.
+         * Link không có clinic hợp lệ giữ nguyên form công khai.
+         */
+        function applyClinicForm() {
+            if (!CLINIC) return;
+
+            const banner = document.getElementById('clinic-banner');
+            if (banner) {
+                banner.hidden = false;
+                banner.textContent = CLINIC.label;
+            }
+            const pidWrap = document.getElementById('pid-wrap');
+            if (pidWrap) pidWrap.hidden = false;
+
+            const marital = document.getElementById('demo-marital');
+            if (marital) {
+                marital.replaceChildren();
+                const blank = document.createElement('option');
+                blank.value = '';
+                blank.textContent = '-- Chọn --';
+                marital.appendChild(blank);
+                [
+                    'Độc thân (chưa/không trong mối quan hệ)',
+                    'Đang trong một mối quan hệ tình cảm',
+                    'Đã kết hôn',
+                    'Ly thân/Ly hôn',
+                    'Góa',
+                ].forEach(label => {
+                    const opt = document.createElement('option');
+                    opt.value = label;
+                    opt.textContent = label;
+                    marital.appendChild(opt);
+                });
+            }
+
+            const incomeLabel = document.getElementById('demo-income-label');
+            if (incomeLabel) {
+                incomeLabel.textContent = '6) Thu nhập của bạn hiện tại ở mức nào so với nhu cầu của bạn?';
+            }
+            const chips = document.querySelector('#demographics .q.full .chips');
+            if (chips) {
+                chips.replaceChildren();
+                ['Khó khăn', 'Tạm đủ', 'Thoải mái', 'Rất giàu có'].forEach((label, i) => {
+                    const id = `i${i + 1}`;
+                    const input = document.createElement('input');
+                    input.id = id;
+                    input.type = 'radio';
+                    input.name = 'demo-income';
+                    input.value = label;
+                    const lab = document.createElement('label');
+                    lab.htmlFor = id;
+                    lab.textContent = label;
+                    chips.appendChild(input);
+                    chips.appendChild(lab);
+                });
+            }
+
+            const physicalLabel = document.getElementById('demo-physical-label');
+            if (physicalLabel) {
+                physicalLabel.textContent = '9) Hiện tại có đang mắc bệnh lý thể chất mạn tính nào không?';
+            }
+        }
+
         // --- Question Data ---
         const permaItems = [
         { code: 'A1', q: 'Bạn có thường xuyên cảm thấy mình đang tiến gần hơn đến việc hoàn thành các mục tiêu của mình?', left: 'Không bao giờ', right: 'Luôn luôn' },
@@ -1060,6 +1165,7 @@
 
         // khi trang tải xong: khoá tab + gắn listener cho checkbox
         document.addEventListener('DOMContentLoaded', () => {
+        applyClinicForm();
         // lần đầu khoá hết trừ consent
         applyConsentLock();
 
@@ -1300,7 +1406,7 @@
             return selected.value;
         }
 
-        const DEMO_KEY = 'mh_demographics_v2';
+        const DEMO_KEY = CLINIC ? `mh_demographics_v2_${CLINIC_KEY}` : 'mh_demographics_v2';
         function collectDemographicsFromDOM() {
             // 1) Năm sinh (4 số, 1900..năm hiện tại)
             const yearNow = new Date().getFullYear();
@@ -1370,7 +1476,9 @@
             // Lưu local (tuỳ chọn)
             const demo = { yob, gender, edu, employ, marital, income, area,
                             religion, religion_detail, physical, physical_detail, psych, psych_detail };
-            localStorage.setItem('mh_demographics_v2', JSON.stringify({ ...demo, saved_at:new Date().toISOString() }));
+            const stored = { ...demo, saved_at:new Date().toISOString() };
+            if (CLINIC) stored.pid = (document.getElementById('pid')?.value || '').trim();
+            localStorage.setItem(DEMO_KEY, JSON.stringify(stored));
             return demo;
         }
 
@@ -1390,7 +1498,7 @@
             const dAnx    = (typeof dass21?.['Lo âu']   === 'number') ? dass21['Lo âu']   : '';
             const dStress = (typeof dass21?.['Stress']  === 'number') ? dass21['Stress']  : '';
 
-            return [name||'', date||'', timeStr||'', P,E,R,M,A, permaTotal, ghqTotal, dDep, dAnx, dStress];
+            return [...identityColumns(name, date, timeStr), P,E,R,M,A, permaTotal, ghqTotal, dDep, dAnx, dStress];
         }
 
 
@@ -1459,6 +1567,7 @@
                 psych, psych_detail,
                 saved_at: new Date().toISOString()
                 };
+                if (CLINIC) demo.pid = (document.getElementById('pid')?.value || '').trim();
                 localStorage.setItem(DEMO_KEY, JSON.stringify(demo));
                 goToTab('perma');
             });
@@ -1468,6 +1577,8 @@
             try {
             const saved = JSON.parse(localStorage.getItem(DEMO_KEY) || '{}');
             if (saved && Object.keys(saved).length) {
+                const pidInput = document.getElementById('pid');
+                if (CLINIC && pidInput) pidInput.value = saved.pid || '';
                 document.getElementById('demo-yob') && (document.getElementById('demo-yob').value = saved.yob || '');
 
                 if (saved.gender) {
@@ -1578,10 +1689,10 @@
                 getSelectedScore('dass21-questions', i)
             );
 
-            // Row cho 3 sheet theo từng câu
-            const permaRow = [ name, date, timeStr, ...permaAnswers ];
-            const ghqRow   = [ name, date, timeStr, ...ghqAnswers ];
-            const dassRow  = [ name, date, timeStr, ...dassAnswers ];
+            if (CLINIC) {
+                const pid = requireText('pid', 'PID');
+                if (pid === null) return;
+            }
 
             const demo = collectDemographicsFromDOM();
             if (!demo) { 
@@ -1594,8 +1705,16 @@
             const q9  = demo.physical === 'Có' ? `Có - ${demo.physical_detail}` : (demo.physical || '');
             const q10 = demo.psych    === 'Có' ? `Có - ${demo.psych_detail}`    : (demo.psych || '');
 
+            const idHeaders = CLINIC
+                ? ['Họ tên','PID','Ngày làm test','Giờ làm test']
+                : ['Họ tên','Ngày làm test','Giờ làm test'];
+            const lead = identityColumns(name, date, timeStr);
+            const permaRow = [ ...lead, ...permaAnswers ];
+            const ghqRow   = [ ...lead, ...ghqAnswers ];
+            const dassRow  = [ ...lead, ...dassAnswers ];
+
             const demographicsRow = [
-                name, date, timeStr, 
+                ...lead,
                 demo.yob || '',
                 demo.gender || '',
                 demo.edu || '',
@@ -1606,13 +1725,13 @@
                 q8, q9, q10
             ];
             const DEMO_HEADERS_13 = [
-                'Họ tên','Ngày làm test','Giờ làm test',
+                ...idHeaders,
                 'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
                 'Thu nhập','Khu vực sống','Tôn giáo','Vấn đề thể chất (Có/Không)','Tiền sử/điều trị tâm thần (Có/Không)'
             ];
 
             const GENERAL_HEADERS = [
-                'Họ tên','Ngày làm test','Giờ làm test',
+                ...idHeaders,
                 'P','E','R','M','A',
                 'Điểm PERMA tổng hợp',
                 'Tổng điểm GHQ-12',
@@ -1632,19 +1751,19 @@
 
             // Header (tuỳ chọn): chỉ ghi nếu sheet trống
             const headers = {
-                'Demographics':   DEMO_HEADERS_13,
-                'General':        GENERAL_HEADERS,
-                'PERMA-Profiler': ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
-                'GHQ-12':         ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
-                'DASS-21':        ['Họ tên','Ngày làm test','Giờ làm test', ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
+                [sheetName('Demographics')]:   DEMO_HEADERS_13,
+                [sheetName('General')]:        GENERAL_HEADERS,
+                [sheetName('PERMA-Profiler')]: [...idHeaders, ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
+                [sheetName('GHQ-12')]:         [...idHeaders, ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
+                [sheetName('DASS-21')]:        [...idHeaders, ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
             };
 
             const rowsPayload = {
-                'DASS-21'        : dassRow,
-                'Demographics'   : demographicsRow,
-                'GHQ-12'         : ghqRow,                
-                'General'        : generalRow,
-                'PERMA-Profiler' : permaRow,
+                [sheetName('DASS-21')]:        dassRow,
+                [sheetName('Demographics')]:   demographicsRow,
+                [sheetName('GHQ-12')]:         ghqRow,
+                [sheetName('General')]:        generalRow,
+                [sheetName('PERMA-Profiler')]: permaRow,
                 };
 
             console.log('SENDING payload →', rowsPayload);
