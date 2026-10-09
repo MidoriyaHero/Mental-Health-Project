@@ -892,21 +892,15 @@
     </script>
     
     <script>
+        // Mỗi phòng khám ghi vào Google Sheet riêng qua web app Apps Script riêng (apps-script/Code.gs).
+        const DEFAULT_WEB_APP_URL = 'https://script.google.com/macros/s/AKfycbzkGO5RIvCfDGDOA3zIWyy_q-mxJsOs8lBlSpWwd_y4OTluYRiRlAKke9hIsBmG9Nk3LA/exec';
         const CLINIC_CONFIG = {
-            sktq: { label: 'Phòng khám Sức khỏe tổng quát', suffix: 'SKTQ' },
-            tamthan: { label: 'Phòng khám tâm thần', suffix: 'TamThan' },
+            sktq: { label: 'Phòng khám Sức khỏe tổng quát', webAppUrl: 'https://script.google.com/macros/s/AKfycbwCxd40x2vhjrTF_1m4sxG7wKHf0xi1d_6iXdZQmLE91z9hOERRcGjZmV0LuTE2eYo/exec' },
+            tamthan: { label: 'Phòng khám tâm thần', webAppUrl: 'https://script.google.com/macros/s/AKfycbw7P8oMvFfLu4m5IjY_db_c99LG1aWH8raujn8DbTsAQ0ChHr_lLNzlCOWPQtqNC3kR/exec' },
         };
         const CLINIC_KEY = new URLSearchParams(location.search).get('clinic');
         const CLINIC = CLINIC_CONFIG[CLINIC_KEY] || null;
-
-        /**
-         * Tên sheet theo phòng khám. Link công khai giữ tên gốc.
-         * @param {string} base
-         * @returns {string}
-         */
-        function sheetName(base) {
-            return CLINIC ? `${base}-${CLINIC.suffix}` : base;
-        }
+        const WEB_APP_URL = CLINIC ? CLINIC.webAppUrl : DEFAULT_WEB_APP_URL;
 
         /**
          * Cột định danh đầu mỗi dòng. PID chỉ có trên link phòng khám, ngay sau họ tên.
@@ -1535,6 +1529,8 @@
             const btn = document.getElementById('demo-save-next');
             if (btn) {
             btn.addEventListener('click', () => {
+                if (CLINIC && requireText('pid', 'PID') === null) return;
+
                 // Thu thập
                 const yob = (document.getElementById('demo-yob')?.value || '').trim();
                 let gender = valRadio('demo-gender');
@@ -1727,7 +1723,8 @@
             const DEMO_HEADERS_13 = [
                 ...idHeaders,
                 'Năm sinh','Giới tính','Học vấn','Việc làm','Hôn nhân',
-                'Thu nhập','Khu vực sống','Tôn giáo','Vấn đề thể chất (Có/Không)','Tiền sử/điều trị tâm thần (Có/Không)'
+                'Thu nhập','Khu vực sống','Tôn giáo',
+                CLINIC ? 'Bệnh lý thể chất mạn tính (Có/Không)' : 'Vấn đề thể chất (Có/Không)','Tiền sử/điều trị tâm thần (Có/Không)'
             ];
 
             const GENERAL_HEADERS = [
@@ -1751,26 +1748,25 @@
 
             // Header (tuỳ chọn): chỉ ghi nếu sheet trống
             const headers = {
-                [sheetName('Demographics')]:   DEMO_HEADERS_13,
-                [sheetName('General')]:        GENERAL_HEADERS,
-                [sheetName('PERMA-Profiler')]: [...idHeaders, ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
-                [sheetName('GHQ-12')]:         [...idHeaders, ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
-                [sheetName('DASS-21')]:        [...idHeaders, ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
+                'Demographics':   DEMO_HEADERS_13,
+                'General':        GENERAL_HEADERS,
+                'PERMA-Profiler': [...idHeaders, ...Array.from({length: 15}, (_,i)=>`Câu ${i+1}`)],
+                'GHQ-12':         [...idHeaders, ...Array.from({length: 12}, (_,i)=>`Câu ${i+1}`)],
+                'DASS-21':        [...idHeaders, ...Array.from({length: 21}, (_,i)=>`Câu ${i+1}`)]
             };
 
             const rowsPayload = {
-                [sheetName('DASS-21')]:        dassRow,
-                [sheetName('Demographics')]:   demographicsRow,
-                [sheetName('GHQ-12')]:         ghqRow,
-                [sheetName('General')]:        generalRow,
-                [sheetName('PERMA-Profiler')]: permaRow,
+                'DASS-21':        dassRow,
+                'Demographics':   demographicsRow,
+                'GHQ-12':         ghqRow,
+                'General':        generalRow,
+                'PERMA-Profiler': permaRow,
                 };
 
             console.log('SENDING payload →', rowsPayload);
             saveResults(allResults);
             displayAllResults(allResults);
-            // 🔗 Gửi 1 lần cho 4 sheet qua Apps Script Web App
-            const WEB_APP_URL='https://script.google.com/macros/s/AKfycbzkGO5RIvCfDGDOA3zIWyy_q-mxJsOs8lBlSpWwd_y4OTluYRiRlAKke9hIsBmG9Nk3LA/exec';
+            // 🔗 Gửi 1 lần cho 5 sheet qua Apps Script Web App (theo phòng khám)
             const sentok = await sendToAppsScript(
                 WEB_APP_URL,
                 rowsPayload,
